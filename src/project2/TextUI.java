@@ -1,5 +1,6 @@
 package project2;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class TextUI {
@@ -41,6 +42,8 @@ public class TextUI {
         /* fill in the 2D array using information for non-empty tiles */
         // =========================================================================
 
+
+
         /* Print the 2D array using dots and numbers */
         for (int k = 0; k < grid.length; k++) {
             for (int m = 0; m < grid[k].length; m++)
@@ -67,31 +70,48 @@ public class TextUI {
         /* To keep the right margin within 75 columns, we split the
            following long string literal into two lines
          */
-        System.out.print ("Slide direction (W, S, Z, A), " +
+        System.out.print ("Slide direction (W, S, A, D), " +
                 "[U]ndo or [Q]uit? ");
 
 
         // =========================================================================
-        // TODO
         // loop on:
         //        Get user input and slide up, down, left, right
         //        renderBoard
         // =========================================================================
-
-
-        /* Almost done.... */
-        switch (game.getStatus()) {
-            case IN_PROGRESS:
-                System.out.println ("Thanks for playing!");
-                break;
-            case USER_WON:
-                System.out.println ("Congratulation!");
-                break;
-            case USER_LOST:
-                System.out.println ("Sorry....!");
-                break;
-
+        while (true) {
+            if (inp.hasNext()) {
+                char direction = inp.nextLine().toLowerCase().charAt(0);
+                if (direction == 'w') {
+                    game.slide(SlideDirection.UP);
+                }
+                else if (direction == 's') {
+                    game.slide(SlideDirection.DOWN);
+                }
+                else if (direction == 'a') {
+                    game.slide(SlideDirection.LEFT);
+                }
+                else if (direction == 'd') {
+                    game.slide(SlideDirection.RIGHT);
+                }
+                renderBoard();
+            }
+//            /* Almost done.... */
+//            switch (game.getStatus()) {
+//                case IN_PROGRESS:
+//                    System.out.println ("Thanks for playing!");
+//                    break;
+//                case USER_WON:
+//                    System.out.println ("Congratulation!");
+//                    break;
+//                case USER_LOST:
+//                    System.out.println ("Sorry....!");
+//                    break;
+//
+//            }
         }
+
+
     }
 
     public static void main(String[] arg) {

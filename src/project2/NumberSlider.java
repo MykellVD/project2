@@ -3,6 +3,7 @@ package project2;
 import java.util.ArrayList;
 
 public interface NumberSlider {
+
 	/**
 	 * Reset the game logic to handle a board of a given dimension
 	 *
@@ -22,6 +23,7 @@ public interface NumberSlider {
 	 */
 	public void reset();
 
+
 	/**
 	 * Set the game board to the desired values given in the 2D array.
 	 * This method should use nested loops to copy each element from the
@@ -33,6 +35,7 @@ public interface NumberSlider {
 	 */
 	public void setValues(final int[][] ref);
 
+
 	/**
 	 * Insert one random tile into an empty spot on the board.
 	 *
@@ -43,6 +46,7 @@ public interface NumberSlider {
 	 */
 	public Cell placeRandomValue();
 
+
 	/**
 	 * Slide all the tiles in the board in the requested direction
 	 * The value should be the number 2 or 4 (random)
@@ -52,6 +56,7 @@ public interface NumberSlider {
 	 */
 	public boolean slide(SlideDirection dir);
 
+
 	/**
 	 *
 	 * @return an arraylist of Cells. Each cell holds the (row,column) and
@@ -59,11 +64,13 @@ public interface NumberSlider {
 	 */
 	public ArrayList<Cell> getNonEmptyTiles();
 
+
 	/**
 	 * Return the current state of the game
 	 * @return one of the possible values of GameStatus enum
 	 */
 	public GameStatus getStatus();
+
 
 	/**
 	 * Undo the most recent action, i.e. restore the board to its previous

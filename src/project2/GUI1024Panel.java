@@ -18,7 +18,7 @@ public class GUI1024Panel extends JPanel {
         gameLogic = new NumberGameArrayList();
         gameLogic.resizeBoard(4, 4, 16);
 
-        setBorder(BorderFactory.createLineBorder(Color.ORANGE));
+        setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setLayout(new GridLayout(4, 4));
 
         gameBoardUI = new JLabel[4][4];
@@ -34,6 +34,8 @@ public class GUI1024Panel extends JPanel {
             }
 
         gameLogic.reset();
+        gameLogic.placeRandomValue();
+        gameLogic.placeRandomValue();
         updateBoard();
         setFocusable(true);
         addKeyListener(new SlideListener());
@@ -53,6 +55,7 @@ public class GUI1024Panel extends JPanel {
         for (Cell c : out) {
             JLabel z = gameBoardUI[c.row][c.column];
             z.setText(String.valueOf(Math.abs(c.value)));
+            System.out.println(String.valueOf(Math.abs(c.value)));
             z.setForeground(c.value > 0 ? Color.BLACK : Color.RED);
         }
     }
@@ -90,6 +93,7 @@ public class GUI1024Panel extends JPanel {
             }
             if (moved) {
                 updateBoard();
+                System.out.println("MOVED");
                 if (gameLogic.getStatus().equals(GameStatus.USER_WON))
                     JOptionPane.showMessageDialog(null, "You won");
                 else if (gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
@@ -97,6 +101,8 @@ public class GUI1024Panel extends JPanel {
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (resp == JOptionPane.YES_OPTION) {
                         gameLogic.reset();
+                        gameLogic.placeRandomValue();
+                        gameLogic.placeRandomValue();
                         updateBoard();
                     } else {
                         System.exit(0);
