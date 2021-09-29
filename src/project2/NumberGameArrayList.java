@@ -1,4 +1,5 @@
-package project2;
+package CISProjects.Project2;
+
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -49,7 +50,12 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public void setValues(int[][] ref) {
-
+		int[][] temp = new int[ref.length][ref.length];
+		for (int row = 0; row < ref[row].length - 1; row++) {
+			for (int col = 0; col < ref[col].length - 1; col++) {
+				temp[row][col] = ref[row][col];
+			}
+		}
 	}
 
 	@Override
