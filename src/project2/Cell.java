@@ -77,8 +77,9 @@ public class Cell implements Comparable<Cell> {
 		this.setValue(0);
 	}
 
-	public void combine(Cell cell) {
+	public Cell combine(Cell cell) {
 		this.setValue(value + cell.getValue());
+		return cell;
 	}
 
 	public boolean equals(Cell cell) {

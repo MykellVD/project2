@@ -1,13 +1,15 @@
-package CISProjects.Project2;
+package project2;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class NumberGameArrayList implements NumberSlider {
 	// Create a 2d ArrayList that holds Cell objects
 	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
 	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
+	ArrayList<Cell> EmptyCells = new ArrayList<>();
 	int height;
 	int width;
 	int winningValue;
@@ -61,66 +63,166 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public Cell placeRandomValue() {
-		while (true) {
-			//creates random vars
-			Random rand = new Random();
-			int random_row = rand.nextInt(3);
-			int random_col = rand.nextInt(3);
-			//determines if value will be a 2 or a 4
-			int random_val = rand.nextInt(2);
-
-			//System.out.println(random_row + " " + random_col + " " + random_val); //REMOVE
-
-			//sets the value of a random row and column to a 2 or a 4 if its an empty cell
-			if (board.get(random_row).get(random_col).getValue() == 0) {
-				if (random_val == 0)
-					board.get(random_row).get(random_col).setValue(2);
-				else
-					board.get(random_row).get(random_col).setValue(4);
-
-				//System.out.println(board.get(random_row).get(random_col).getValue()); //REMOVE
-				return board.get(random_row).get(random_col);
+		getNonEmptyTiles();
+		EmptyCells.clear();
+		//adds Cell to EmptyCells if its value is 0
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				if (board.get(row).get(col).value == 0) {
+					EmptyCells.add(board.get(row).get(col));
+				}
 			}
+
 		}
+		Random rand = new Random();
+
+		int index = rand.nextInt(EmptyCells.size());
+//		Collections.shuffle(EmptyCells);
+
+		int random_val = rand.nextInt(2);
+
+
+		if (random_val == 0)
+			board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column).setValue(2);
+		else
+			board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column).setValue(4);
+
+		return board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column);
+
 	}
 
 	@Override
 	public boolean slide(SlideDirection dir) {
+		getNonEmptyTiles();
 		if (dir.equals(SlideDirection.LEFT)) {
-			System.out.println("LEFT");
+//			System.out.println("LEFT");
+			SlideLeft();
 			return true;
 		}
 		if (dir.equals(SlideDirection.UP)) {
-			System.out.println("UP");
+//			System.out.println("UP");
+			SlideUp();
 			return true;
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
-			System.out.println("RIGHT");
+//			System.out.println("RIGHT");
 			SlideRight();
 			return true;
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
-			System.out.println("DOWN");
+//			System.out.println("DOWN");
+			SlideDown();
 			return true;
 		}
 		return false;
 	}
 
+
+
+	private void SlideLeft() {
+
+		for (int x = 0; x < height; x++) {
+			for (int row = 0; row < height; row++) {
+				for (int col = 1; col < width; col++) {
+					//current index isnt empty
+					if (board.get(row).get(col).value != 0) {
+
+						if (board.get(row).get(col - 1).value == 0) {
+							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue()));
+							board.get(row).set(col, new Cell());
+						}
+
+
+
+						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
+//							System.out.println("Combined");
+							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue() * 2));
+							board.get(row).set(col, new Cell());
+						}
+
+//						System.out.println("After manipulation");
+//						printBoard();
+					}
+				}
+			}
+		}
+	}
+
+	private void SlideUp() {
+		for (int x = 0; x < height; x++) {
+			for (int row = 1; row < height; row++) {
+				for (int col = 0; col < width; col++) {
+					//current index isnt empty
+					if (board.get(row).get(col).value != 0) {
+
+						if (board.get(row - 1).get(col).value == 0) {
+							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue()));
+							board.get(row).set(col, new Cell());
+						}
+
+
+
+						if (board.get(row - 1).get(col).value == board.get(row).get(col).value) {
+//							System.out.println("Combined");
+							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue() * 2));
+							board.get(row).set(col, new Cell());
+						}
+
+//						System.out.println("After manipulation");
+//						printBoard();
+					}
+				}
+			}
+		}
+	}
+
 	private void SlideRight() {
-		getNonEmptyTiles();
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width-1; col++) {
-//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
-				if (board.get(row).get(col).value != 0) {
-					System.out.println("Before manipulation");
-					printBoard();
+		for (int x = 0; x < height; x++) {
+			for (int row = height - 1; row > -1; row--) {
+				for (int col = width - 2; col > -1; col--) {
+					//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
+					if (board.get(row).get(col).value != 0) {
 
-					if (board.get(row).get(col+1).value == 0)
-						board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
-						board.get(row).set(col, new Cell());
+						if (board.get(row).get(col + 1).value == 0) {
+							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
+							board.get(row).set(col, new Cell());
+						}
 
-					System.out.println("After manipulation");
-					printBoard();
+						if (board.get(row).get(col + 1).value == board.get(row).get(col).value) {
+//							System.out.println("Combined");
+							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue() * 2));
+							board.get(row).set(col, new Cell());
+						}
+
+//						System.out.println("After manipulation");
+//						printBoard();
+					}
+				}
+			}
+		}
+	}
+
+	private void SlideDown() {
+		for (int x = 0; x < height; x++) {
+			for (int row = height - 2; row > -1; row--) {
+				for (int col = width - 1; col > -1; col--) {
+					//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
+					if (board.get(row).get(col).value != 0) {
+
+						if (board.get(row + 1).get(col).value == 0) {
+							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue()));
+							board.get(row).set(col, new Cell());
+						}
+
+						if (board.get(row + 1).get(col).value == board.get(row).get(col).value) {
+//							System.out.println("Combined");
+							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue() * 2));
+							board.get(row).set(col, new Cell());
+						}
+
+//						System.out.println("After manipulation");
+//						printBoard();
+					}
 				}
 			}
 		}
@@ -143,9 +245,7 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding
-		for (int i = 0; i < NonEmptyCells.size(); i++){
-			NonEmptyCells.clear();
-		}
+		NonEmptyCells.clear();
 
 		//adds Cell to NonEmptyCells if its value isnt 0
 		for (int row = 0; row < height; row++) {
