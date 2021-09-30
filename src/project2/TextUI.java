@@ -1,5 +1,6 @@
 package project2;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -41,7 +42,9 @@ public class TextUI {
         // TODO
         /* fill in the 2D array using information for non-empty tiles */
         // =========================================================================
-
+        ArrayList<Cell> out = game.getNonEmptyTiles();
+        for (Cell c : out)
+            grid[c.row][c.column] = c.value;
 
 
         /* Print the 2D array using dots and numbers */

@@ -6,6 +6,7 @@ import java.util.Random;
 public class NumberGameArrayList implements NumberSlider {
 	// Create a 2d ArrayList that holds Cell objects
 	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
+	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
 	int height;
 	int width;
 	int winningValue;
@@ -40,8 +41,8 @@ public class NumberGameArrayList implements NumberSlider {
 		//resets all Cell objects values to 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
-				//set Cell using row, column, value = 0 to each element
-				board.get(row).get(col).setValue(0);
+				//clears each cell
+				board.get(row).get(col).clear();
 			}
 		}
 		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
@@ -49,7 +50,12 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public void setValues(int[][] ref) {
-
+		int[][] temp = new int[ref.length][ref.length];
+		for (int row = 0; row < ref[row].length - 1; row++) {
+			for (int col = 0; col < ref[col].length - 1; col++) {
+				temp[row][col] = ref[row][col];
+			}
+		}
 	}
 
 	@Override
@@ -89,6 +95,7 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
 			System.out.println("RIGHT");
+			SlideRight();
 			return true;
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
@@ -98,22 +105,79 @@ public class NumberGameArrayList implements NumberSlider {
 		return false;
 	}
 
+	private void SlideRight() {
+		getNonEmptyTiles();
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width-1; col++) {
+//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
+				if (board.get(row).get(col).value != 0) {
+					System.out.println("Before manipulation");
+					printBoard();
+
+					if (board.get(row).get(col+1).value == 0)
+						board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
+						board.get(row).set(col, new Cell());
+
+					System.out.println("After manipulation");
+					printBoard();
+				}
+			}
+		}
+	}
+
+	public void printBoard() {
+		String NUM_FORMAT = String.format("%%%dd", 4);
+		String BLANK_FORMAT = "%" + (4) + "s";
+		for (int k = 0; k < height; k++) {
+			for (int m = 0; m < width; m++)
+				if (board.get(k).get(m).value == 0)
+					System.out.printf (BLANK_FORMAT, ".");
+				else
+					System.out.printf (NUM_FORMAT, board.get(k).get(m).value);
+			System.out.println();
+		}
+		System.out.println();
+	}
+
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
-		ArrayList<Cell> NonEmptyCells = new ArrayList<>();
+		//Clears NonEmptyCells to not have duplicates after sliding
+		for (int i = 0; i < NonEmptyCells.size(); i++){
+			NonEmptyCells.clear();
+		}
+
+		//adds Cell to NonEmptyCells if its value isnt 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
-				if (board.get(row).get(col).getValue() != 0) {
+				if (board.get(row).get(col).value != 0) {
 					NonEmptyCells.add(board.get(row).get(col));
 				}
 			}
-			System.out.println(NonEmptyCells.get(row).getRow() + ", " + NonEmptyCells.get(row).getColumn() +  ", " + NonEmptyCells.get(row).getValue());
+
 		}
+
 		return NonEmptyCells;
 	}
 
 	@Override
 	public GameStatus getStatus() {
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				if (board.get(row).get(col).getValue() == winningValue) {
+					return GameStatus.USER_WON;
+				}
+			}
+		}
+		//All cells are filled with a value that isnt 0
+//		if (NonEmptyCells.size() == height * width) {
+//			for (int row = 0; row < height; row++) {
+//				for (int col = 0; col < width; col++) {
+//					if (board.get(row).get(col).getValue() == board.get(row).get(col+1).getValue())
+//						return G
+//				}
+//			}
+//
+//		}
 		return GameStatus.IN_PROGRESS;
 	}
 
