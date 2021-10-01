@@ -10,6 +10,7 @@ public class NumberGameArrayList implements NumberSlider {
 	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
 	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
 	ArrayList<Cell> EmptyCells = new ArrayList<>();
+	ArrayList<ArrayList> previousBoards = new ArrayList<>();
 
 	Random rand = new Random(892349);
 	int prevRandRow;
@@ -45,7 +46,7 @@ public class NumberGameArrayList implements NumberSlider {
 	}
 
 	@Override
-	public void reset() {
+	public void reset() { //add vars
 		//resets all Cell objects values to 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
@@ -72,18 +73,12 @@ public class NumberGameArrayList implements NumberSlider {
 		Cell cell;
 		while (true) {
 			cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
-			System.out.printf("Random Cell (%s): \n Row: %d \n Column: %d\n Value: %d\n", cell, cell.row, cell.column, cell.value);
-			System.out.printf("Previous: %d, %d\n", prevRandRow, prevRandCol);
 			if (cell.row != prevRandRow || cell.column != prevRandCol) {
 				break;
 			}
 		}
 
-
-
-		int random_val = rand.nextInt(2);
-
-		if (random_val == 0)
+		if (rand.nextInt(2) == 0)
 			board.get( cell.row).get( cell.column).value = 2;
 		else
 			board.get( cell.row).get( cell.column).value = 4;
@@ -98,29 +93,25 @@ public class NumberGameArrayList implements NumberSlider {
 		getNonEmptyTiles();
 		if (dir.equals(SlideDirection.LEFT)) {
 //			System.out.println("LEFT");
-			SlideLeft();
-			return true;
+			return SlideLeft();
 		}
 		if (dir.equals(SlideDirection.UP)) {
 //			System.out.println("UP");
-			SlideUp();
-			return true;
+			return SlideUp();
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
 //			System.out.println("RIGHT");
-			SlideRight();
-			return true;
+			return SlideRight();
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
 //			System.out.println("DOWN");
-			SlideDown();
-			return true;
+			return SlideDown();
 		}
 		return false;
 	}
 
-	private void SlideLeft() {
-
+	private boolean SlideLeft() {
+		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = 0; row < height; row++) {
 				for (int col = 1; col < width; col++) {
@@ -128,15 +119,16 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col - 1).value == 0) {
-							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue()));
+//							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue()));
+							board.get(row).get(col - 1).value = board.get(row).get(col).value;
 							board.get(row).get(col).value = 0;
 						}
 
 
 
 						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
-//							System.out.println("Combined");
-							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue() * 2));
+//							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue() * 2));
+							board.get(row).get(col - 1).value = board.get(row).get(col).value * 2;
 							board.get(row).get(col).value = 0;
 						}
 
@@ -146,9 +138,14 @@ public class NumberGameArrayList implements NumberSlider {
 				}
 			}
 		}
+
+//		return previousBoards.get(previousBoards.size()-2).equals(board);
+
+		return true;
 	}
 
-	private void SlideUp() {
+	private boolean SlideUp() {
+		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = 1; row < height; row++) {
 				for (int col = 0; col < width; col++) {
@@ -156,15 +153,16 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row - 1).get(col).value == 0) {
-							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue()));
+//							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue()));
+							board.get(row - 1).get(col).value = board.get(row).get(col).value;
 							board.get(row).get(col).value = 0;
 						}
 
 
 
 						if (board.get(row - 1).get(col).value == board.get(row).get(col).value) {
-//							System.out.println("Combined");
-							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue() * 2));
+//							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue() * 2));
+							board.get(row - 1).get(col).value = board.get(row).get(col).value * 2;
 							board.get(row).get(col).value = 0;
 						}
 
@@ -174,9 +172,14 @@ public class NumberGameArrayList implements NumberSlider {
 				}
 			}
 		}
+
+//		return previousBoards.get(previousBoards.size()-2).equals(board);
+
+		return true;
 	}
 
-	private void SlideRight() {
+	private boolean SlideRight() {
+		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 1; row > -1; row--) {
 				for (int col = width - 2; col > -1; col--) {
@@ -184,13 +187,14 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col + 1).value == 0) {
-							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
+//							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
+							board.get(row).get(col + 1).value = board.get(row).get(col).value;
 							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row).get(col + 1).value == board.get(row).get(col).value) {
-//							System.out.println("Combined");
-							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue() * 2));
+//							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue() * 2));
+							board.get(row).get(col + 1).value = board.get(row).get(col).value * 2;
 							board.get(row).get(col).value = 0;
 						}
 
@@ -200,9 +204,14 @@ public class NumberGameArrayList implements NumberSlider {
 				}
 			}
 		}
+
+//		return previousBoards.get(previousBoards.size()-2).equals(board);
+
+		return true;
 	}
 
-	private void SlideDown() {
+	private boolean SlideDown() {
+		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 2; row > -1; row--) {
 				for (int col = width - 1; col > -1; col--) {
@@ -210,13 +219,14 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row + 1).get(col).value == 0) {
-							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue()));
+//							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue()));
+							board.get(row + 1).get(col).value = board.get(row).get(col).value;
 							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row + 1).get(col).value == board.get(row).get(col).value) {
-//							System.out.println("Combined");
-							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue() * 2));
+//							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue() * 2));
+							board.get(row + 1).get(col).value = board.get(row).get(col).value * 2;
 							board.get(row).get(col).value = 0;
 						}
 
@@ -226,6 +236,10 @@ public class NumberGameArrayList implements NumberSlider {
 				}
 			}
 		}
+
+//		return previousBoards.get(previousBoards.size()-2).equals(board);
+
+		return true;
 	}
 
 	public void printBoard() {
@@ -241,7 +255,6 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		System.out.println();
 	}
-
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding

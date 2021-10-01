@@ -71,16 +71,6 @@ public class TextUI {
         game.placeRandomValue();
         game.placeRandomValue();
         game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
-        game.placeRandomValue();
         renderBoard();
 
         /* To keep the right margin within 75 columns, we split the
