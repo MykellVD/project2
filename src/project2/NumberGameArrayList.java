@@ -129,7 +129,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 						if (board.get(row).get(col - 1).value == 0) {
 							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue()));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 
@@ -137,7 +137,7 @@ public class NumberGameArrayList implements NumberSlider {
 						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
 //							System.out.println("Combined");
 							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue() * 2));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
@@ -157,7 +157,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 						if (board.get(row - 1).get(col).value == 0) {
 							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue()));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 
@@ -165,7 +165,7 @@ public class NumberGameArrayList implements NumberSlider {
 						if (board.get(row - 1).get(col).value == board.get(row).get(col).value) {
 //							System.out.println("Combined");
 							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue() * 2));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
@@ -185,13 +185,13 @@ public class NumberGameArrayList implements NumberSlider {
 
 						if (board.get(row).get(col + 1).value == 0) {
 							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row).get(col + 1).value == board.get(row).get(col).value) {
 //							System.out.println("Combined");
 							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue() * 2));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
@@ -211,13 +211,13 @@ public class NumberGameArrayList implements NumberSlider {
 
 						if (board.get(row + 1).get(col).value == 0) {
 							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue()));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row + 1).get(col).value == board.get(row).get(col).value) {
 //							System.out.println("Combined");
 							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue() * 2));
-							board.get(row).set(col, new Cell());
+							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
