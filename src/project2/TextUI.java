@@ -68,6 +68,19 @@ public class TextUI {
         /* Place the first two random tiles */
         game.placeRandomValue();
         game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
+        game.placeRandomValue();
         renderBoard();
 
         /* To keep the right margin within 75 columns, we split the
@@ -87,28 +100,22 @@ public class TextUI {
                 char direction = inp.nextLine().toLowerCase().charAt(0);
                 if (direction == 'w') {
                     game.slide(SlideDirection.UP);
-                    game.placeRandomValue();
                 }
                 else if (direction == 's') {
                     game.slide(SlideDirection.DOWN);
-                    game.placeRandomValue();
                 }
                 else if (direction == 'a') {
                     game.slide(SlideDirection.LEFT);
-                    game.placeRandomValue();
                 }
                 else if (direction == 'd') {
                     game.slide(SlideDirection.RIGHT);
-                    game.placeRandomValue();
-                }
 
+                }
+                game.placeRandomValue();
                 renderBoard();
             }
             /* Almost done.... */
             switch (game.getStatus()) {
-                case IN_PROGRESS:
-                    System.out.println ("Thanks for playing!");
-                    break;
                 case USER_WON:
                     System.out.println ("Congratulation!");
                     break;

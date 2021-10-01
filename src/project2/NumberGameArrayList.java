@@ -10,6 +10,11 @@ public class NumberGameArrayList implements NumberSlider {
 	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
 	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
 	ArrayList<Cell> EmptyCells = new ArrayList<>();
+
+	Random rand = new Random(892349);
+	int prevRandRow;
+	int prevRandCol;
+
 	int height;
 	int width;
 	int winningValue;
@@ -45,7 +50,7 @@ public class NumberGameArrayList implements NumberSlider {
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				//clears each cell
-				board.get(row).get(col).clear();
+				board.get(row).get(col).value = 0;
 			}
 		}
 		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
@@ -64,32 +69,29 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public Cell placeRandomValue() {
 		getNonEmptyTiles();
-		EmptyCells.clear();
-		//adds Cell to EmptyCells if its value is 0
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width; col++) {
-				if (board.get(row).get(col).value == 0) {
-					EmptyCells.add(board.get(row).get(col));
-				}
+		Cell cell;
+		while (true) {
+			cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
+			System.out.printf("Random Cell (%s): \n Row: %d \n Column: %d\n Value: %d\n", cell, cell.row, cell.column, cell.value);
+			System.out.printf("Previous: %d, %d\n", prevRandRow, prevRandCol);
+			if (cell.row != prevRandRow || cell.column != prevRandCol) {
+				break;
 			}
-
 		}
-		Random rand = new Random();
 
-		int index = rand.nextInt(EmptyCells.size());
-//		Collections.shuffle(EmptyCells);
+
 
 		int random_val = rand.nextInt(2);
 
-
 		if (random_val == 0)
-			board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column).setValue(2);
+			board.get( cell.row).get( cell.column).value = 2;
 		else
-			board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column).setValue(4);
+			board.get( cell.row).get( cell.column).value = 4;
 
-		return board.get(EmptyCells.get(index).row).get(EmptyCells.get(index).column);
+		return board.get( cell.row).get( cell.column);
 
 	}
+
 
 	@Override
 	public boolean slide(SlideDirection dir) {
@@ -116,8 +118,6 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		return false;
 	}
-
-
 
 	private void SlideLeft() {
 
@@ -246,16 +246,21 @@ public class NumberGameArrayList implements NumberSlider {
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding
 		NonEmptyCells.clear();
+		EmptyCells.clear();
 
 		//adds Cell to NonEmptyCells if its value isnt 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				if (board.get(row).get(col).value != 0) {
 					NonEmptyCells.add(board.get(row).get(col));
+				} else {
+					EmptyCells.add(board.get(row).get(col));
 				}
 			}
 
 		}
+
+		Collections.shuffle(EmptyCells);
 
 		return NonEmptyCells;
 	}
