@@ -72,8 +72,14 @@ public class NumberGameArrayList implements NumberSlider {
 		getNonEmptyTiles();
 		Cell cell;
 		while (true) {
-			cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
-			if (cell.row != prevRandRow || cell.column != prevRandCol) {
+			if (EmptyCells.size() > 2) {
+				cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
+
+				if (cell.row != prevRandRow || cell.column != prevRandCol)
+					break;
+			}
+			else {
+				cell = EmptyCells.get(0);
 				break;
 			}
 		}

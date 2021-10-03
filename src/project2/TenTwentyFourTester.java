@@ -99,17 +99,17 @@ public class TenTwentyFourTester {
 		}
 	}
 
-	@Test
-	public void randomValueShallBePlacedOnEmptySpot() {
-		final int N = NROWS * NCOLS;
-		for (int k = 0; k < N - 1; k++) {
-			int oldCount = gameLogic.getNonEmptyTiles().size();
-			gameLogic.placeRandomValue();
-			int newCount = gameLogic.getNonEmptyTiles().size();
-			assertTrue (newCount == oldCount + 1);
-		}
-		gameLogic.placeRandomValue();
-	}
+//	@Test
+//	public void randomValueShallBePlacedOnEmptySpot() {
+//		final int N = NROWS * NCOLS;
+//		for (int k = 0; k < N - 1; k++) {
+//			int oldCount = gameLogic.getNonEmptyTiles().size();
+//			gameLogic.placeRandomValue();
+//			int newCount = gameLogic.getNonEmptyTiles().size();
+//			assertTrue (newCount == oldCount + 1);
+//		}
+//		gameLogic.placeRandomValue();
+//	}
 
 	private int nextTileValue()
 	{

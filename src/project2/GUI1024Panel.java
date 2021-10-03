@@ -1,4 +1,4 @@
-package CISProjects.Project2;
+package project2;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -14,6 +14,9 @@ public class GUI1024Panel extends JPanel {
 
 	private JLabel[][] gameBoardUI;
 	private NumberGameArrayList gameLogic;
+	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 80);
+	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 60);
+	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 48);
 
 	public GUI1024Panel() {
 		gameLogic = new NumberGameArrayList();
@@ -25,10 +28,10 @@ public class GUI1024Panel extends JPanel {
 		gameBoardUI = new JLabel[4][4];
 		setBackground(Color.DARK_GRAY);
 
-		Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 40);
+
 		for (int k = 0; k < gameBoardUI.length; k++)
 			for (int m = 0; m < gameBoardUI[k].length; m++) {
-				gameBoardUI[k][m] = new JLabel();
+				gameBoardUI[k][m] = new JLabel("",SwingConstants.CENTER);
 				gameBoardUI[k][m].setFont(myTextFont);
 				gameBoardUI[k][m].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
@@ -58,13 +61,18 @@ public class GUI1024Panel extends JPanel {
 		for (Cell c : out) {
 			JLabel z = gameBoardUI[c.row][c.column];
 			z.setText(String.valueOf(Math.abs(c.value)));
-			System.out.println(String.valueOf(Math.abs(c.value)));
-			z.setForeground(c.value > 0 ? Color.WHITE : Color.RED);
+//			z.setText("1048"); //Test Text Here
+
+			if (z.getText().length() == 3)
+				z.setFont(myTextFont3Char);
+			if (z.getText().length() == 4)
+				z.setFont(myTextFont4Char);
+
 			if (c.value == 2){
-				z.setForeground(Color.GRAY);
+				z.setForeground(Color.LIGHT_GRAY);
 			}
 			if (c.value == 4){
-				z.setForeground(Color.LIGHT_GRAY);
+				z.setForeground(Color.WHITE);
 			}
 			if (c.value == 8){
 				z.setForeground(Color.PINK);
