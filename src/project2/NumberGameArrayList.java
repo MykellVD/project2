@@ -59,10 +59,9 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public void setValues(int[][] ref) {
-		int[][] temp = new int[ref.length][ref.length];
-		for (int row = 0; row < ref[row].length - 1; row++) {
-			for (int col = 0; col < ref[col].length - 1; col++) {
-				temp[row][col] = ref[row][col];
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				board.get(row).get(col).value = ref[row][col];
 			}
 		}
 	}
@@ -70,26 +69,30 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public Cell placeRandomValue() {
 		getNonEmptyTiles();
-		Cell cell;
-		while (true) {
+		Cell cell = null;
+		while (!EmptyCells.isEmpty()) {
 			if (EmptyCells.size() > 2) {
 				cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
 
 				if (cell.row != prevRandRow || cell.column != prevRandCol)
 					break;
-			}
-			else {
+			} else {
 				cell = EmptyCells.get(0);
 				break;
 			}
+
 		}
+		if (cell != null) {
+			if (rand.nextInt(2) == 0)
+				board.get(cell.row).get(cell.column).value = 2;
+			else
+				board.get(cell.row).get(cell.column).value = 4;
 
-		if (rand.nextInt(2) == 0)
-			board.get( cell.row).get( cell.column).value = 2;
+			return board.get( cell.row).get( cell.column);
+		}
 		else
-			board.get( cell.row).get( cell.column).value = 4;
+			return null;
 
-		return board.get( cell.row).get( cell.column);
 
 	}
 
@@ -125,16 +128,16 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col - 1).value == 0) {
-//							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue()));
-							board.get(row).get(col - 1).value = board.get(row).get(col).value;
+							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value));
+//							board.get(row).get(col - 1).value = board.get(row).get(col).value;
 							board.get(row).get(col).value = 0;
 						}
 
 
 
 						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
-//							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).getValue() * 2));
-							board.get(row).get(col - 1).value = board.get(row).get(col).value * 2;
+							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value * 2));
+//							board.get(row).get(col - 1).value = board.get(row).get(col).value * 2;
 							board.get(row).get(col).value = 0;
 						}
 
@@ -286,23 +289,43 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public GameStatus getStatus() {
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width; col++) {
-				if (board.get(row).get(col).getValue() == winningValue) {
+		getNonEmptyTiles();
+		boolean userLost = false;
+		for (int row = 0; row < height; row++)
+			for (int col = 0; col < width; col++)
+				if (board.get(row).get(col).value == winningValue) {
 					return GameStatus.USER_WON;
 				}
+		boolean lose = true;
+		if (EmptyCells.size() == 0) {
+			for (int row = 1; row < height - 1; row++) {
+				for (int col = 0; col < width; col++) {
+					Cell cur = board.get(row).get(col);
+//					Remove
+//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row-1).get(col).row, board.get(row-1).get(col).column, board.get(row-1).get(col).value, cur.equals(board.get(row - 1).get(col)));
+//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row+1).get(col).row, board.get(row+1).get(col).column, board.get(row+1).get(col).value, cur.equals(board.get(row + 1).get(col)));
+					if (cur.equals(board.get(row - 1).get(col)))
+						return GameStatus.IN_PROGRESS;
+
+					if (cur.equals(board.get(row + 1).get(col)))
+						return GameStatus.IN_PROGRESS;
+				}
 			}
+			for (int row = 0; row < height; row++) {
+				for (int col = 1; col < width - 1; col++) {
+					Cell cur = board.get(row).get(col);
+//					Remove
+//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row).get(col-1).row, board.get(row).get(col-1).column, board.get(row).get(col-1).value, cur.equals(board.get(row).get(col - 1)));
+//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row).get(col+1).row, board.get(row).get(col+1).column, board.get(row).get(col+1).value, cur.equals(board.get(row).get(col + 1)));
+					if (cur.equals(board.get(row).get(col - 1)))
+						return GameStatus.IN_PROGRESS;
+
+					if (cur.equals(board.get(row).get(col + 1)))
+						return GameStatus.IN_PROGRESS;
+				}
+			}
+			return GameStatus.USER_LOST;
 		}
-		//All cells are filled with a value that isnt 0
-//		if (NonEmptyCells.size() == height * width) {
-//			for (int row = 0; row < height; row++) {
-//				for (int col = 0; col < width; col++) {
-//					if (board.get(row).get(col).getValue() == board.get(row).get(col+1).getValue())
-//						return G
-//				}
-//			}
-//
-//		}
 		return GameStatus.IN_PROGRESS;
 	}
 
