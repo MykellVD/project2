@@ -61,8 +61,8 @@ public class GUI1024Panel extends JPanel {
 		for (Cell c : out) {
 			JLabel z = gameBoardUI[c.row][c.column];
 			z.setText(String.valueOf(Math.abs(c.value)));
-//			z.setText("1048"); //Test Text Here
-
+			if (z.getText().length() < 3)
+				z.setFont(myTextFont);
 			if (z.getText().length() == 3)
 				z.setFont(myTextFont3Char);
 			if (z.getText().length() == 4)
