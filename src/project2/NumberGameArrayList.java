@@ -51,7 +51,8 @@ public class NumberGameArrayList implements NumberSlider {
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				//clears each cell
-				board.get(row).get(col).value = 0;
+				board.get(row).set(col, new Cell(row, col, 0));
+//				board.get(row).get(col).value = 0;
 			}
 		}
 		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
@@ -100,21 +101,26 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public boolean slide(SlideDirection dir) {
 		getNonEmptyTiles();
+		printBoard();
 		if (dir.equals(SlideDirection.LEFT)) {
-//			System.out.println("LEFT");
-			return SlideLeft();
+			boolean bool = SlideLeft();
+			placeRandomValue();
+			return bool;
 		}
 		if (dir.equals(SlideDirection.UP)) {
-//			System.out.println("UP");
-			return SlideUp();
+			boolean bool = SlideUp();
+			placeRandomValue();
+			return bool;
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
-//			System.out.println("RIGHT");
-			return SlideRight();
+			boolean bool = SlideRight();
+			placeRandomValue();
+			return bool;
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
-//			System.out.println("DOWN");
-			return SlideDown();
+			boolean bool = SlideDown();
+			placeRandomValue();
+			return bool;
 		}
 		return false;
 	}
@@ -122,15 +128,17 @@ public class NumberGameArrayList implements NumberSlider {
 	private boolean SlideLeft() {
 		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
-			for (int row = 0; row < height; row++) {
-				for (int col = 1; col < width; col++) {
+			System.out.println(x);
+			for (int row = height-1; row >= 0; row--) {
+				for (int col = width-1; col > 0; col--) {
 					//current index isnt empty
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col - 1).value == 0) {
 							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value));
 //							board.get(row).get(col - 1).value = board.get(row).get(col).value;
-							board.get(row).get(col).value = 0;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 
@@ -138,14 +146,16 @@ public class NumberGameArrayList implements NumberSlider {
 						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
 							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value * 2));
 //							board.get(row).get(col - 1).value = board.get(row).get(col).value * 2;
-							board.get(row).get(col).value = 0;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
-//						printBoard();
+						printBoard();
 					}
 				}
 			}
+
 		}
 
 //		return previousBoards.get(previousBoards.size()-2).equals(board);
@@ -162,21 +172,23 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row - 1).get(col).value == 0) {
-//							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue()));
-							board.get(row - 1).get(col).value = board.get(row).get(col).value;
-							board.get(row).get(col).value = 0;
+							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).value));
+//							board.get(row - 1).get(col).value = board.get(row).get(col).value;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 
 
 						if (board.get(row - 1).get(col).value == board.get(row).get(col).value) {
-//							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).getValue() * 2));
-							board.get(row - 1).get(col).value = board.get(row).get(col).value * 2;
-							board.get(row).get(col).value = 0;
+							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).value * 2));
+//							board.get(row - 1).get(col).value = board.get(row).get(col).value * 2;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
-//						printBoard();
+						printBoard();
 					}
 				}
 			}
@@ -196,19 +208,21 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col + 1).value == 0) {
-//							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue()));
-							board.get(row).get(col + 1).value = board.get(row).get(col).value;
-							board.get(row).get(col).value = 0;
+							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).value));
+//							board.get(row).get(col + 1).value = board.get(row).get(col).value;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row).get(col + 1).value == board.get(row).get(col).value) {
-//							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).getValue() * 2));
-							board.get(row).get(col + 1).value = board.get(row).get(col).value * 2;
-							board.get(row).get(col).value = 0;
+							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).value * 2));
+//							board.get(row).get(col + 1).value = board.get(row).get(col).value * 2;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
-//						printBoard();
+						printBoard();
 					}
 				}
 			}
@@ -228,19 +242,21 @@ public class NumberGameArrayList implements NumberSlider {
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row + 1).get(col).value == 0) {
-//							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue()));
-							board.get(row + 1).get(col).value = board.get(row).get(col).value;
-							board.get(row).get(col).value = 0;
+							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).value));
+//							board.get(row + 1).get(col).value = board.get(row).get(col).value;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 						if (board.get(row + 1).get(col).value == board.get(row).get(col).value) {
-//							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).getValue() * 2));
-							board.get(row + 1).get(col).value = board.get(row).get(col).value * 2;
-							board.get(row).get(col).value = 0;
+							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).value * 2));
+//							board.get(row + 1).get(col).value = board.get(row).get(col).value * 2;
+							board.get(row).set(col, new Cell(row, col, 0));
+//							board.get(row).get(col).value = 0;
 						}
 
 //						System.out.println("After manipulation");
-//						printBoard();
+						printBoard();
 					}
 				}
 			}
