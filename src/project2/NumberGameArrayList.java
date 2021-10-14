@@ -1,9 +1,10 @@
-package project2;
+package CISProjects.Project2;
 
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Stack;
 
 public class NumberGameArrayList implements NumberSlider {
 	// Create a 2d ArrayList that holds Cell objects
@@ -11,6 +12,8 @@ public class NumberGameArrayList implements NumberSlider {
 	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
 	ArrayList<Cell> EmptyCells = new ArrayList<>();
 	ArrayList<ArrayList> previousBoards = new ArrayList<>();
+	private Stack<int[][]> savedBoards;
+	private Stack <Integer> savedScores;
 
 	Random rand = new Random(892349);
 	int prevRandRow;
@@ -19,6 +22,7 @@ public class NumberGameArrayList implements NumberSlider {
 	int height;
 	int width;
 	int winningValue;
+	private int score;
 
 	@Override
 	public void resizeBoard(int height, int width, int winningValue) {
@@ -345,8 +349,31 @@ public class NumberGameArrayList implements NumberSlider {
 		return GameStatus.IN_PROGRESS;
 	}
 
+	public void saveBoard() {
+		int[][] temp = new int[height][width];
+
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				temp[row][row] = board.get(row).get(col).value;
+			}
+		}
+		
+		savedBoards.push(temp);
+		savedScores.push(score);
+	}
+
+
 	@Override
 	public void undo() {
+		if(savedBoards.size() > 1){
 
+			int[][] previousBoard = savedBoards.pop();
+
+			int previousScore = savedScores.pop();
+
+			setValues(previousBoard);
+			score = previousScore;
+
+		}
 	}
 }
