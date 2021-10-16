@@ -2,7 +2,6 @@ package project2;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 public class GUI1024Panel extends JPanel {
 
 	private JLabel[][] gameBoardUI;
-	private NumberGameArrayList gameLogic;
+	public NumberGameArrayList gameLogic;
 	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 80);
 	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 60);
 	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 48);
@@ -39,12 +38,11 @@ public class GUI1024Panel extends JPanel {
 			}
 
 		gameLogic.reset();
-		gameLogic.placeRandomValue();
-		gameLogic.placeRandomValue();
 		updateBoard();
 		setFocusable(true);
 		addKeyListener(new SlideListener());
 	}
+
 
 	private void updateBoard() {
 		for (JLabel[] row : gameBoardUI)
@@ -104,6 +102,49 @@ public class GUI1024Panel extends JPanel {
 		}
 	}
 
+	public void undo() {
+		//rolls back the board
+		gameLogic.undo();
+		updateBoard();
+	}
+
+	public void reset() {
+		gameLogic.reset();
+		updateBoard();
+	}
+
+	public void changeBoardSize(int height, int width) {
+		gameLogic.changeBoardSize(height, width);
+
+
+		removeAll();
+
+		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		setLayout(new GridLayout(height, width));
+
+		gameBoardUI = new JLabel[height][width];
+		setBackground(Color.DARK_GRAY);
+
+
+		for (int k = 0; k < gameBoardUI.length; k++)
+			for (int m = 0; m < gameBoardUI[k].length; m++) {
+				gameBoardUI[k][m] = new JLabel("",SwingConstants.CENTER);
+				gameBoardUI[k][m].setFont(myTextFont);
+				gameBoardUI[k][m].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
+				add(gameBoardUI[k][m]);
+			}
+
+		gameLogic.reset();
+		updateBoard();
+		setFocusable(true);
+		addKeyListener(new SlideListener());
+	}
+
+	public void changeWinningVal(int winningVal) {
+		gameLogic.changeWinningVal(winningVal);
+	}
+
 	private class SlideListener implements KeyListener, ActionListener {
 		@Override
 		public void keyTyped(KeyEvent e) { }
@@ -137,8 +178,6 @@ public class GUI1024Panel extends JPanel {
 			}
 			if (moved) {
 				updateBoard();
-				gameLogic.placeRandomValue();
-				updateBoard();
 //                System.out.println("MOVED");
 				if (gameLogic.getStatus().equals(GameStatus.USER_WON))
 					JOptionPane.showMessageDialog(null, "You won");
@@ -165,5 +204,7 @@ public class GUI1024Panel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 
 		}
+
+
 	}
 }

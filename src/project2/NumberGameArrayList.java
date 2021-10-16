@@ -1,4 +1,4 @@
-package CISProjects.Project2;
+package project2;
 
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ public class NumberGameArrayList implements NumberSlider {
 	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
 	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
 	ArrayList<Cell> EmptyCells = new ArrayList<>();
-	ArrayList<ArrayList> previousBoards = new ArrayList<>();
-	private Stack<int[][]> savedBoards;
-	private Stack <Integer> savedScores;
+	ArrayList<int[][]> previousBoards = new ArrayList<>();
+	Stack<int[][]> savedBoards = new Stack<>();
+	Stack <Integer> savedScores= new Stack<>();
 
-	Random rand = new Random(892349);
+	Random rand = new Random();
 	int prevRandRow;
 	int prevRandCol;
 
@@ -49,6 +49,35 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	public void changeBoardSize(int height, int width) {
+		//sets base values for later
+		this.height = height;
+		this.width = width;
+
+		board.clear();
+
+		//creates a 2d ArrayList containing Cell objects
+		for (int row = 0; row < height; row++) {
+			//adds ArrayList to board
+			board.add(new ArrayList<>(width));
+			for (int col = 0; col < width; col++) {
+				//adds Cell using row, column, value = 0 to each board element
+				board.get(row).add(new Cell(row, col, 0));
+			}
+		}
+		//REMOVE test to see if row and column are set correctly
+		//System.out.println(board.get(3).get(2).getRow() + " " + board.get(3).get(2).getColumn());
+
+	}
+
+	public void changeWinningVal(int winningValue) {
+		if (winningValue % 2 == 0 && winningValue < 0) {
+			throw new IllegalArgumentException();
+		} else {
+			this.winningValue = winningValue;
+		}
+	}
+
 	@Override
 	public void reset() { //add vars
 		//resets all Cell objects values to 0
@@ -59,6 +88,9 @@ public class NumberGameArrayList implements NumberSlider {
 //				board.get(row).get(col).value = 0;
 			}
 		}
+		placeRandomValue();
+		placeRandomValue();
+		saveBoard();
 		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
 	}
 
@@ -105,34 +137,37 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public boolean slide(SlideDirection dir) {
 		getNonEmptyTiles();
-		printBoard();
+		//printBoard();
 		if (dir.equals(SlideDirection.LEFT)) {
 			boolean bool = SlideLeft();
 			placeRandomValue();
+			saveBoard();
 			return bool;
 		}
 		if (dir.equals(SlideDirection.UP)) {
 			boolean bool = SlideUp();
 			placeRandomValue();
+			saveBoard();
 			return bool;
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
 			boolean bool = SlideRight();
 			placeRandomValue();
+			saveBoard();
 			return bool;
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
 			boolean bool = SlideDown();
 			placeRandomValue();
+			saveBoard();
 			return bool;
 		}
 		return false;
 	}
 
 	private boolean SlideLeft() {
-		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
-			System.out.println(x);
+//			System.out.println(x);
 			for (int row = height-1; row >= 0; row--) {
 				for (int col = width-1; col > 0; col--) {
 					//current index isnt empty
@@ -155,7 +190,7 @@ public class NumberGameArrayList implements NumberSlider {
 						}
 
 //						System.out.println("After manipulation");
-						printBoard();
+						//printBoard();
 					}
 				}
 			}
@@ -168,7 +203,6 @@ public class NumberGameArrayList implements NumberSlider {
 	}
 
 	private boolean SlideUp() {
-		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = 1; row < height; row++) {
 				for (int col = 0; col < width; col++) {
@@ -192,7 +226,7 @@ public class NumberGameArrayList implements NumberSlider {
 						}
 
 //						System.out.println("After manipulation");
-						printBoard();
+						//printBoard();
 					}
 				}
 			}
@@ -204,7 +238,6 @@ public class NumberGameArrayList implements NumberSlider {
 	}
 
 	private boolean SlideRight() {
-		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 1; row > -1; row--) {
 				for (int col = width - 2; col > -1; col--) {
@@ -226,7 +259,7 @@ public class NumberGameArrayList implements NumberSlider {
 						}
 
 //						System.out.println("After manipulation");
-						printBoard();
+						//printBoard();
 					}
 				}
 			}
@@ -238,7 +271,6 @@ public class NumberGameArrayList implements NumberSlider {
 	}
 
 	private boolean SlideDown() {
-		previousBoards.add(board);
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 2; row > -1; row--) {
 				for (int col = width - 1; col > -1; col--) {
@@ -260,7 +292,7 @@ public class NumberGameArrayList implements NumberSlider {
 						}
 
 //						System.out.println("After manipulation");
-						printBoard();
+						//printBoard();
 					}
 				}
 			}
@@ -354,10 +386,9 @@ public class NumberGameArrayList implements NumberSlider {
 
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
-				temp[row][row] = board.get(row).get(col).value;
+				temp[row][col] = board.get(row).get(col).value;
 			}
 		}
-		
 		savedBoards.push(temp);
 		savedScores.push(score);
 	}
@@ -367,13 +398,16 @@ public class NumberGameArrayList implements NumberSlider {
 	public void undo() {
 		if(savedBoards.size() > 1){
 
-			int[][] previousBoard = savedBoards.pop();
+			int[][] previousBoard = savedBoards.get(savedBoards.size()-2);
+			savedBoards.pop();
 
-			int previousScore = savedScores.pop();
+			int previousScore = savedScores.get(savedScores.size()-2);
+			savedScores.pop();
 
 			setValues(previousBoard);
 			score = previousScore;
 
 		}
 	}
+
 }

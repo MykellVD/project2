@@ -1,4 +1,4 @@
-package CISProjects.Project2;
+package project2;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -44,12 +44,13 @@ public class GUI1024 {
         menu.add(difWinValue);
         menu.add(exitGame);
 
+        GUI1024Panel panel = new GUI1024Panel();
+
         //the undo button
         undoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NumberGameArrayList n = new NumberGameArrayList();
-                n.undo();
+                panel.undo();
             }
         });
 
@@ -66,8 +67,7 @@ public class GUI1024 {
         newGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NumberGameArrayList n = new NumberGameArrayList();
-                n.reset();
+                panel.reset();
             }
         });
 
@@ -75,10 +75,9 @@ public class GUI1024 {
         resizeBoard.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NumberGameArrayList n = new NumberGameArrayList();
                 int boardSizeRow = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount of Rows"));
                 int boardSizeCol = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount if Columns"));
-                n.resizeBoard(boardSizeRow, boardSizeCol, 2048);
+                panel.changeBoardSize(boardSizeRow, boardSizeCol);
                 //***extra credit***
 
             }
@@ -88,16 +87,14 @@ public class GUI1024 {
         difWinValue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NumberGameArrayList n = new NumberGameArrayList();
                 int winningValue = Integer.parseInt(JOptionPane.showInputDialog("Please Select a New Winning Value"));
-                n.resizeBoard(4,4, winningValue);
+                panel.changeWinningVal(winningValue);
             }
         });
 
         //exits the game
         exitGame.addActionListener(e -> System.exit(0));
 
-        GUI1024Panel panel = new GUI1024Panel();
         //panel.setFocusable(true);
         gui.getContentPane().add(panel);
 
