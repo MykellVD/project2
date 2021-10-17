@@ -12,10 +12,13 @@ import java.util.ArrayList;
 public class GUI1024Panel extends JPanel {
 
 	private JLabel[][] gameBoardUI;
-	public NumberGameArrayList gameLogic;
+	private NumberGameArrayList gameLogic;
 	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 80);
 	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 60);
 	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 48);
+
+	private JButton undoBut, newGameBut, resizeBut, winValBut;
+	private JLabel score;
 
 	public GUI1024Panel() {
 		gameLogic = new NumberGameArrayList();
@@ -36,6 +39,8 @@ public class GUI1024Panel extends JPanel {
 				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
 				add(gameBoardUI[k][m]);
 			}
+
+		undoBut = new JButton("undo");
 
 		gameLogic.reset();
 		updateBoard();
@@ -115,7 +120,6 @@ public class GUI1024Panel extends JPanel {
 
 	public void changeBoardSize(int height, int width) {
 		gameLogic.changeBoardSize(height, width);
-
 
 		removeAll();
 

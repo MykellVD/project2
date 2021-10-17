@@ -410,4 +410,11 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	public int getScore() {
+		int total = 0;
+		for (int i = 0; i < NonEmptyCells.size()-1; i++) {
+			total += NonEmptyCells.get(0).value;
+		}
+		return total;
+	}
 }

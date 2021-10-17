@@ -1,30 +1,67 @@
 package project2;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 
+public class GUI1024 extends JFrame{
 
-public class GUI1024 {
-    public static void main(String arg[]){
-        //Menubar, menu, and all the items
-        JMenuBar menuBar;
-        JMenu menu;
-        JMenuItem undoButton;
-        JMenuItem highScore;
-        JMenuItem newGame;
-        JMenuItem resizeBoard;
-        JMenuItem difWinValue;
-        JMenuItem exitGame;
+    private static GUI1024Panel panel;
+    private static GUI1024ButtonsPanel buttonsPanel;
+    private final JPanel highscorePanel;
+    private final JMenuBar menuBar;
 
-        JFrame gui = new JFrame ("Welcome to 1024!");
-        gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //Menubar, menu, and all the items
+    private final JMenu menu;
+    private final JMenuItem undoButton,highScore, newGame, resizeBoard, difWinValue, exitGame;
+
+    public GUI1024(GUI1024Panel panel, GUI1024ButtonsPanel buttonPanel) {
+        setTitle("Welcome to 2048!");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+//        splitPanel = new JPanel();
+
+        this.panel = panel;
+        highscorePanel = new JPanel();
+        this.buttonsPanel = buttonPanel;
+
+        SpringLayout layout = new SpringLayout();
+
+        getContentPane().setLayout(layout);
+
+        getContentPane().add(highscorePanel);
+        highscorePanel.setSize(200,500);
+
+        getContentPane().add(this.panel);
+        this.panel.setSize(500,500);
+
+        getContentPane().add(this.buttonsPanel);
+        this.buttonsPanel.setSize(200,500);
+
+        layout.putConstraint(SpringLayout.WEST, highscorePanel, 3,
+                SpringLayout.WEST, getContentPane());
+        layout.putConstraint(SpringLayout.NORTH, highscorePanel, 3,
+                SpringLayout.NORTH, getContentPane());
+
+        layout.putConstraint(SpringLayout.WEST, this.panel, 3,
+                SpringLayout.WEST, highscorePanel);
+        layout.putConstraint(SpringLayout.NORTH, this.panel, 3,
+                SpringLayout.NORTH, getContentPane());
+
+        layout.putConstraint(SpringLayout.WEST, this.buttonsPanel, 3,
+                SpringLayout.WEST, this.panel);
+        layout.putConstraint(SpringLayout.NORTH, this.buttonsPanel, 3,
+                SpringLayout.NORTH, getContentPane());
+
+        setSize(900,500);
+
+//        pack();
 
         //creates the menubar
         menuBar = new JMenuBar();
-        gui.setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
 
         //instantiating the menu and all the menuItems
         menu = new JMenu("Menu");
@@ -44,9 +81,6 @@ public class GUI1024 {
         menu.add(difWinValue);
         menu.add(exitGame);
 
-        GUI1024Panel panel = new GUI1024Panel();
-
-        //the undo button
         undoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,10 +129,18 @@ public class GUI1024 {
         //exits the game
         exitGame.addActionListener(e -> System.exit(0));
 
-        //panel.setFocusable(true);
-        gui.getContentPane().add(panel);
 
-        gui.setSize(500, 500);
-        gui.setVisible(true);
+    }
+
+
+    public static void main(String args[]){
+        GUI1024Panel panel = new GUI1024Panel();
+        GUI1024ButtonsPanel buttonPanel = new GUI1024ButtonsPanel();
+        EventQueue.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+                new GUI1024(panel, buttonPanel).setVisible(true);
+            }
+        });
     }
 }
