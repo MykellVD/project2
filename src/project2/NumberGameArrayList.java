@@ -10,19 +10,23 @@ import java.util.Stack;
 public class NumberGameArrayList implements NumberSlider {
 	// Create a 2d ArrayList that holds Cell objects
 	private ArrayList< ArrayList<Cell> > board = new ArrayList<>();
-	private ArrayList<Cell> NonEmptyCells = new ArrayList<>();
-	private ArrayList<Cell> EmptyCells = new ArrayList<>();
+	private ArrayList<Cell> nonEmptyCells = new ArrayList<>();
+	private ArrayList<Cell> emptyCells = new ArrayList<>();
 	private Stack<int[][]> savedBoards = new Stack<>();
 	private Stack<Integer> savedScores = new Stack<>(); //dont think we will need
 
 	private Random rand = new Random();
-	private int prevRandRow;
-	private int prevRandCol;
 
 	private int height;
 	private int width;
 	private int winningValue;
+
 	private int score;
+	private int numSlides;
+
+	private int numWins;
+	private int numPlays;
+	private int highestScore;
 
 	@Override
 	public void resizeBoard(int height, int width, int winningValue) {
@@ -79,21 +83,23 @@ public class NumberGameArrayList implements NumberSlider {
 	}
 
 	@Override
-	public void reset() { //add vars
+	public void reset() {
 		//resets all Cell objects values to 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				//clears each cell
 				board.get(row).set(col, new Cell(row, col, 0));
-//				board.get(row).get(col).value = 0;
 			}
 		}
-		placeRandomValue();
-		placeRandomValue();
 		savedBoards.clear();
 		savedScores.clear();
+
+		score = 0;
+		numSlides = 0;
+
+		placeRandomValue();
+		placeRandomValue();
 		saveBoard();
-		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
 	}
 
 	@Override
@@ -109,17 +115,8 @@ public class NumberGameArrayList implements NumberSlider {
 	public Cell placeRandomValue() {
 		getNonEmptyTiles();
 		Cell cell = null;
-		while (!EmptyCells.isEmpty()) {
-			if (EmptyCells.size() > 2) {
-				cell = EmptyCells.get(rand.nextInt(EmptyCells.size() - 1));
-
-				if (cell.row != prevRandRow || cell.column != prevRandCol)
-					break;
-			} else {
-				cell = EmptyCells.get(0);
-				break;
-			}
-
+		if (!emptyCells.isEmpty()) {
+			cell = emptyCells.get(0);
 		}
 		if (cell != null) {
 			if (rand.nextInt(2) == 0)
@@ -127,49 +124,44 @@ public class NumberGameArrayList implements NumberSlider {
 			else
 				board.get(cell.row).get(cell.column).value = 4;
 
+			numSlides += 1;
 			return board.get( cell.row).get( cell.column);
 		}
 		else
 			return null;
-
-
 	}
 
 
 	@Override
 	public boolean slide(SlideDirection dir) {
 		getNonEmptyTiles();
-		//printBoard();
+		boolean bool = false;
 		if (dir.equals(SlideDirection.LEFT)) {
-			boolean bool = SlideLeft();
+			bool = SlideLeft();
 			placeRandomValue();
 			saveBoard();
-			return bool;
 		}
 		if (dir.equals(SlideDirection.UP)) {
-			boolean bool = SlideUp();
+			bool = SlideUp();
 			placeRandomValue();
 			saveBoard();
-			return bool;
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
-			boolean bool = SlideRight();
+			bool = SlideRight();
 			placeRandomValue();
 			saveBoard();
-			return bool;
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
-			boolean bool = SlideDown();
+			bool = SlideDown();
 			placeRandomValue();
 			saveBoard();
-			return bool;
 		}
-		return false;
+		return bool;
 	}
 
 	private boolean SlideLeft() {
+		boolean moved = false;
 		for (int x = 0; x < height; x++) {
-//			System.out.println(x);
 			for (int row = height-1; row >= 0; row--) {
 				for (int col = width-1; col > 0; col--) {
 					//current index isnt empty
@@ -177,132 +169,119 @@ public class NumberGameArrayList implements NumberSlider {
 
 						if (board.get(row).get(col - 1).value == 0) {
 							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value));
-//							board.get(row).get(col - 1).value = board.get(row).get(col).value;
 							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							moved = true;
 						}
-
-
 
 						if (board.get(row).get(col - 1).value == board.get(row).get(col).value) {
-							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value * 2));
-//							board.get(row).get(col - 1).value = board.get(row).get(col).value * 2;
-							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							if (!board.get(row).get(col - 1).hasCombined && !board.get(row).get(col).hasCombined) {
+								board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value * 2));
+								board.get(row).set(col, new Cell(row, col, 0));
+								board.get(row).get(col - 1).hasCombined = true;
+								moved = true;
+							}
 						}
-
-//						System.out.println("After manipulation");
-						//printBoard();
 					}
 				}
 			}
-
 		}
-
-//		return previousBoards.get(previousBoards.size()-2).equals(board);
-
-		return true;
+		resetHasCombined();
+		return moved;
 	}
 
 	private boolean SlideUp() {
+		boolean moved = false;
 		for (int x = 0; x < height; x++) {
 			for (int row = 1; row < height; row++) {
 				for (int col = 0; col < width; col++) {
 					//current index isnt empty
 					if (board.get(row).get(col).value != 0) {
-
 						if (board.get(row - 1).get(col).value == 0) {
 							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).value));
-//							board.get(row - 1).get(col).value = board.get(row).get(col).value;
 							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							moved = true;
 						}
-
-
 
 						if (board.get(row - 1).get(col).value == board.get(row).get(col).value) {
-							board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).value * 2));
-//							board.get(row - 1).get(col).value = board.get(row).get(col).value * 2;
-							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							if (!board.get(row - 1).get(col).hasCombined && !board.get(row).get(col).hasCombined) {
+								board.get(row - 1).set(col, new Cell(row - 1, col, board.get(row).get(col).value * 2));
+								board.get(row).set(col, new Cell(row, col, 0));
+								board.get(row - 1).get(col).hasCombined = true;
+								moved = true;
+							}
 						}
-
-//						System.out.println("After manipulation");
-						//printBoard();
 					}
 				}
 			}
 		}
-
-//		return previousBoards.get(previousBoards.size()-2).equals(board);
-
-		return true;
+		resetHasCombined();
+		return moved;
 	}
 
 	private boolean SlideRight() {
+		boolean moved = false;
+		printBoard();
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 1; row > -1; row--) {
 				for (int col = width - 2; col > -1; col--) {
-					//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
 					if (board.get(row).get(col).value != 0) {
-
 						if (board.get(row).get(col + 1).value == 0) {
 							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).value));
-//							board.get(row).get(col + 1).value = board.get(row).get(col).value;
 							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							moved = true;
 						}
 
 						if (board.get(row).get(col + 1).value == board.get(row).get(col).value) {
-							board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).value * 2));
-//							board.get(row).get(col + 1).value = board.get(row).get(col).value * 2;
-							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							if (!board.get(row).get(col + 1).hasCombined && !board.get(row).get(col).hasCombined) {
+								board.get(row).set(col + 1, new Cell(row, col + 1, board.get(row).get(col).value * 2));
+								board.get(row).set(col, new Cell(row, col, 0));
+								board.get(row).get(col + 1).hasCombined = true;
+								moved = true;
+							}
 						}
-
-//						System.out.println("After manipulation");
-						//printBoard();
 					}
 				}
 			}
+			printBoard();
 		}
-
-//		return previousBoards.get(previousBoards.size()-2).equals(board);
-
-		return true;
+		resetHasCombined();
+		return moved;
 	}
 
 	private boolean SlideDown() {
+		boolean moved = false;
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 2; row > -1; row--) {
 				for (int col = width - 1; col > -1; col--) {
-					//				[[2,0,0,0]] -> [[0,2,0,0]] -> [[0,0,2,0]] -> [[0,0,0,2]]
 					if (board.get(row).get(col).value != 0) {
-
 						if (board.get(row + 1).get(col).value == 0) {
 							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).value));
-//							board.get(row + 1).get(col).value = board.get(row).get(col).value;
 							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							moved = true;
 						}
 
 						if (board.get(row + 1).get(col).value == board.get(row).get(col).value) {
-							board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).value * 2));
-//							board.get(row + 1).get(col).value = board.get(row).get(col).value * 2;
-							board.get(row).set(col, new Cell(row, col, 0));
-//							board.get(row).get(col).value = 0;
+							if (!board.get(row + 1).get(col).hasCombined && !board.get(row).get(col).hasCombined) {
+								board.get(row + 1).set(col, new Cell(row + 1, col, board.get(row).get(col).value * 2));
+								board.get(row).set(col, new Cell(row, col, 0));
+								board.get(row + 1).get(col).hasCombined = true;
+								moved = true;
+							}
 						}
-
-//						System.out.println("After manipulation");
-						//printBoard();
 					}
 				}
 			}
 		}
+		resetHasCombined();
+		return moved;
+	}
 
-//		return previousBoards.get(previousBoards.size()-2).equals(board);
-
-		return true;
+	private void resetHasCombined() {
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				board.get(row).get(col).hasCombined = false;
+			}
+		}
 	}
 
 	public void printBoard() {
@@ -322,24 +301,24 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding
-		NonEmptyCells.clear();
-		EmptyCells.clear();
+		nonEmptyCells.clear();
+		emptyCells.clear();
 
 		//adds Cell to NonEmptyCells if its value isnt 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				if (board.get(row).get(col).value != 0) {
-					NonEmptyCells.add(board.get(row).get(col));
+					nonEmptyCells.add(board.get(row).get(col));
 				} else {
-					EmptyCells.add(board.get(row).get(col));
+					emptyCells.add(board.get(row).get(col));
 				}
 			}
 
 		}
 
-		Collections.shuffle(EmptyCells);
+		Collections.shuffle(emptyCells);
 
-		return NonEmptyCells;
+		return nonEmptyCells;
 	}
 
 	@Override
@@ -352,13 +331,10 @@ public class NumberGameArrayList implements NumberSlider {
 					return GameStatus.USER_WON;
 				}
 		boolean lose = true;
-		if (EmptyCells.size() == 0) {
+		if (emptyCells.size() == 0) {
 			for (int row = 1; row < height - 1; row++) {
 				for (int col = 0; col < width; col++) {
 					Cell cur = board.get(row).get(col);
-//					Remove
-//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row-1).get(col).row, board.get(row-1).get(col).column, board.get(row-1).get(col).value, cur.equals(board.get(row - 1).get(col)));
-//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row+1).get(col).row, board.get(row+1).get(col).column, board.get(row+1).get(col).value, cur.equals(board.get(row + 1).get(col)));
 					if (cur.equals(board.get(row - 1).get(col)))
 						return GameStatus.IN_PROGRESS;
 
@@ -369,9 +345,6 @@ public class NumberGameArrayList implements NumberSlider {
 			for (int row = 0; row < height; row++) {
 				for (int col = 1; col < width - 1; col++) {
 					Cell cur = board.get(row).get(col);
-//					Remove
-//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row).get(col-1).row, board.get(row).get(col-1).column, board.get(row).get(col-1).value, cur.equals(board.get(row).get(col - 1)));
-//					System.out.printf("(%d, %d):%d = (%d, %d):%d - %b\n", board.get(row).get(col).row, board.get(row).get(col).column, board.get(row).get(col).value, board.get(row).get(col+1).row, board.get(row).get(col+1).column, board.get(row).get(col+1).value, cur.equals(board.get(row).get(col + 1)));
 					if (cur.equals(board.get(row).get(col - 1)))
 						return GameStatus.IN_PROGRESS;
 
@@ -415,52 +388,13 @@ public class NumberGameArrayList implements NumberSlider {
 
 	public int getScore() {
 		int total = 0;
-		for (int i = 0; i < NonEmptyCells.size()-1; i++) {
-			total += NonEmptyCells.get(0).value;
+		for (int i = 0; i < nonEmptyCells.size(); i++) {
+			total += nonEmptyCells.get(i).value * nonEmptyCells.get(i).value;
 		}
 		return total;
 	}
 
-	public void addHighscore() {
-		PrintWriter out = null;
-		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter("highscores.txt")));
-			out.println();
-		}
-		catch (FileNotFoundException e) {
-			throw new IllegalArgumentException();
-		}
-		catch (IOException e){
-			throw new IllegalArgumentException();
-		}
-		finally{
-			out.close();
-		}
-	}
-
-	public String[] getHighscoreList() {
-		String[] highscores = new String[10];
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader("highscores.txt"));
-
-			highscores[0] = reader.readLine();
-			highscores[1] = reader.readLine();
-			highscores[2] = reader.readLine();
-			highscores[3] = reader.readLine();
-			highscores[4] = reader.readLine();
-			highscores[5] = reader.readLine();
-			highscores[6] = reader.readLine();
-			highscores[7] = reader.readLine();
-			highscores[8] = reader.readLine();
-			highscores[9] = reader.readLine();
-
-
-		} catch (IOException ex) {
-			System.err.println("ERROR reading scores from file");
-		}
-
-		System.out.println(highscores);
-
-		return highscores;
+	public int getNumSlides() {
+		return numSlides;
 	}
 }

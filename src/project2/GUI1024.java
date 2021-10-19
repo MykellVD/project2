@@ -12,7 +12,7 @@ public class GUI1024 extends JFrame{
 
     private static GUI1024Panel panel;
     private static GUIButtonsPanel buttonsPanel;
-    private final GUIHighscorePanel highscorePanel;
+    private static GUIHighscorePanel highscorePanel;
     private final JMenuBar menuBar;
 
     //Menubar, menu, and all the items
@@ -137,7 +137,7 @@ public class GUI1024 extends JFrame{
                 case KeyEvent.VK_U:
                     try {
                         System.out.println("Attempt to undo");
-                        panel.gameLogic.undo();
+                        panel.undo();
                         moved = true;
                     } catch (IllegalStateException exp) {
                         JOptionPane.showMessageDialog(null, "Can't undo beyond the first move");
@@ -146,6 +146,7 @@ public class GUI1024 extends JFrame{
             }
             if (moved) {
                 panel.updateBoard();
+                highscorePanel.updateScore();
 //                System.out.println("MOVED");
                 if (panel.gameLogic.getStatus().equals(GameStatus.USER_WON))
                     JOptionPane.showMessageDialog(null, "You won");
@@ -156,6 +157,7 @@ public class GUI1024 extends JFrame{
                         panel.gameLogic.reset();
                         panel.gameLogic.placeRandomValue();
                         panel.gameLogic.placeRandomValue();
+                        highscorePanel.updateScore();
                         panel.updateBoard();
                     } else {
                         System.exit(0);

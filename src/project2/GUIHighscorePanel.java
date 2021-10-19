@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GUIHighscorePanel extends JPanel {
+    GUI1024Panel panel;
     private JLabel score, scoreText;
     private JPanel scorePanel, highscoresPanel;
 
@@ -12,6 +13,8 @@ public class GUIHighscorePanel extends JPanel {
     private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
     public GUIHighscorePanel(GUI1024Panel panel) {
+        this.panel = panel;
+
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(layout);
 
@@ -39,9 +42,8 @@ public class GUIHighscorePanel extends JPanel {
 
     }
 
-    public void updateScore(String score) {
-        panel.
-        this.score.setText(score);
+    public void updateScore() {
+        this.score.setText("  " + this.panel.gameLogic.getScore());
     }
 
 }

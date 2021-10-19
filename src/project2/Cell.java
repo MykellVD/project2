@@ -2,6 +2,7 @@ package project2;
 
 public class Cell implements Comparable<Cell> {
     public int row, column, value;
+	public boolean hasCombined;
 
     
 	public Cell()
@@ -71,15 +72,6 @@ public class Cell implements Comparable<Cell> {
 	 */
 	public void setValue(int value) {
 		this.value = value;
-	}
-
-	public void clear() {
-		this.setValue(0);
-	}
-
-	public Cell combine(Cell cell) {
-		this.setValue(value + cell.getValue());
-		return cell;
 	}
 
 	public boolean equals(Cell cell) {
