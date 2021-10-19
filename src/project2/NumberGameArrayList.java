@@ -1,6 +1,7 @@
 package project2;
 
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -8,20 +9,19 @@ import java.util.Stack;
 
 public class NumberGameArrayList implements NumberSlider {
 	// Create a 2d ArrayList that holds Cell objects
-	ArrayList< ArrayList<Cell> > board = new ArrayList<>();
-	ArrayList<Cell> NonEmptyCells = new ArrayList<>();
-	ArrayList<Cell> EmptyCells = new ArrayList<>();
-	ArrayList<int[][]> previousBoards = new ArrayList<>();
-	Stack<int[][]> savedBoards = new Stack<>();
-	Stack <Integer> savedScores= new Stack<>();
+	private ArrayList< ArrayList<Cell> > board = new ArrayList<>();
+	private ArrayList<Cell> NonEmptyCells = new ArrayList<>();
+	private ArrayList<Cell> EmptyCells = new ArrayList<>();
+	private Stack<int[][]> savedBoards = new Stack<>();
+	private Stack<Integer> savedScores = new Stack<>(); //dont think we will need
 
-	Random rand = new Random();
-	int prevRandRow;
-	int prevRandCol;
+	private Random rand = new Random();
+	private int prevRandRow;
+	private int prevRandCol;
 
-	int height;
-	int width;
-	int winningValue;
+	private int height;
+	private int width;
+	private int winningValue;
 	private int score;
 
 	@Override
@@ -90,6 +90,8 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		placeRandomValue();
 		placeRandomValue();
+		savedBoards.clear();
+		savedScores.clear();
 		saveBoard();
 		//System.out.println(board.get(3).get(2).getValue()); //REMOVE checks to see if row 3 col 2 = 0
 	}
@@ -316,6 +318,7 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		System.out.println();
 	}
+
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding
@@ -416,5 +419,48 @@ public class NumberGameArrayList implements NumberSlider {
 			total += NonEmptyCells.get(0).value;
 		}
 		return total;
+	}
+
+	public void addHighscore() {
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter("highscores.txt")));
+			out.println();
+		}
+		catch (FileNotFoundException e) {
+			throw new IllegalArgumentException();
+		}
+		catch (IOException e){
+			throw new IllegalArgumentException();
+		}
+		finally{
+			out.close();
+		}
+	}
+
+	public String[] getHighscoreList() {
+		String[] highscores = new String[10];
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("highscores.txt"));
+
+			highscores[0] = reader.readLine();
+			highscores[1] = reader.readLine();
+			highscores[2] = reader.readLine();
+			highscores[3] = reader.readLine();
+			highscores[4] = reader.readLine();
+			highscores[5] = reader.readLine();
+			highscores[6] = reader.readLine();
+			highscores[7] = reader.readLine();
+			highscores[8] = reader.readLine();
+			highscores[9] = reader.readLine();
+
+
+		} catch (IOException ex) {
+			System.err.println("ERROR reading scores from file");
+		}
+
+		System.out.println(highscores);
+
+		return highscores;
 	}
 }

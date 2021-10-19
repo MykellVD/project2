@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class GUI1024Panel extends JPanel {
 
 	private JLabel[][] gameBoardUI;
-	private NumberGameArrayList gameLogic;
+	public NumberGameArrayList gameLogic;
 	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 80);
 	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 60);
 	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 48);
@@ -45,11 +45,11 @@ public class GUI1024Panel extends JPanel {
 		gameLogic.reset();
 		updateBoard();
 		setFocusable(true);
-		addKeyListener(new SlideListener());
+		addKeyListener(new GUI1024.SlideListener());
 	}
 
 
-	private void updateBoard() {
+	public void updateBoard() {
 		for (JLabel[] row : gameBoardUI)
 			for (JLabel s : row) {
 				s.setText("");
@@ -142,73 +142,70 @@ public class GUI1024Panel extends JPanel {
 		gameLogic.reset();
 		updateBoard();
 		setFocusable(true);
-		addKeyListener(new SlideListener());
+		addKeyListener(new GUI1024.SlideListener());
 	}
 
 	public void changeWinningVal(int winningVal) {
 		gameLogic.changeWinningVal(winningVal);
 	}
 
-	private class SlideListener implements KeyListener, ActionListener {
-		@Override
-		public void keyTyped(KeyEvent e) { }
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-
-			boolean moved = false;
-			switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					moved = gameLogic.slide(SlideDirection.UP);
-					break;
-				case KeyEvent.VK_LEFT:
-					moved = gameLogic.slide(SlideDirection.LEFT);
-					break;
-				case KeyEvent.VK_DOWN:
-					moved = gameLogic.slide(SlideDirection.DOWN);
-					break;
-				case KeyEvent.VK_RIGHT:
-					moved = gameLogic.slide(SlideDirection.RIGHT);
-					break;
-				case KeyEvent.VK_U:
-					try {
-						System.out.println("Attempt to undo");
-						gameLogic.undo();
-						moved = true;
-					} catch (IllegalStateException exp) {
-						JOptionPane.showMessageDialog(null, "Can't undo beyond the first move");
-						moved = false;
-					}
-			}
-			if (moved) {
-				updateBoard();
-//                System.out.println("MOVED");
-				if (gameLogic.getStatus().equals(GameStatus.USER_WON))
-					JOptionPane.showMessageDialog(null, "You won");
-				else if (gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
-					int resp = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "TentOnly Over!",
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (resp == JOptionPane.YES_OPTION) {
-						gameLogic.reset();
-						gameLogic.placeRandomValue();
-						gameLogic.placeRandomValue();
-						updateBoard();
-					} else {
-						System.exit(0);
-					}
-				}
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-		}
-
-
-	}
+//	public static class SlideListener implements KeyListener, ActionListener {
+//		@Override
+//		public void keyTyped(KeyEvent e) { }
+//
+//		@Override
+//		public void keyPressed(KeyEvent e) {
+//
+//			boolean moved = false;
+//			switch (e.getKeyCode()) {
+//				case KeyEvent.VK_UP:
+//					moved = gameLogic.slide(SlideDirection.UP);
+//					break;
+//				case KeyEvent.VK_LEFT:
+//					moved = gameLogic.slide(SlideDirection.LEFT);
+//					break;
+//				case KeyEvent.VK_DOWN:
+//					moved = gameLogic.slide(SlideDirection.DOWN);
+//					break;
+//				case KeyEvent.VK_RIGHT:
+//					moved = gameLogic.slide(SlideDirection.RIGHT);
+//					break;
+//				case KeyEvent.VK_U:
+//					try {
+//						System.out.println("Attempt to undo");
+//						gameLogic.undo();
+//						moved = true;
+//					} catch (IllegalStateException exp) {
+//						JOptionPane.showMessageDialog(null, "Can't undo beyond the first move");
+//						moved = false;
+//					}
+//			}
+//			if (moved) {
+//				updateBoard();
+////                System.out.println("MOVED");
+//				if (gameLogic.getStatus().equals(GameStatus.USER_WON))
+//					JOptionPane.showMessageDialog(null, "You won");
+//				else if (gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
+//					int resp = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "TentOnly Over!",
+//							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+//					if (resp == JOptionPane.YES_OPTION) {
+//						gameLogic.reset();
+//						gameLogic.placeRandomValue();
+//						gameLogic.placeRandomValue();
+//						updateBoard();
+//					} else {
+//						System.exit(0);
+//					}
+//				}
+//			}
+//		}
+//
+//		@Override
+//		public void keyReleased(KeyEvent e) { }
+//
+//		@Override
+//		public void actionPerformed(ActionEvent e) { }
+//
+//
+//	}
 }
