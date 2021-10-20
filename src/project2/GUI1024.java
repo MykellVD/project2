@@ -12,34 +12,34 @@ public class GUI1024 extends JFrame{
 
     private static GUI1024Panel panel;
     private static GUIButtonsPanel buttonsPanel;
-    private static GUIHighscorePanel highscorePanel;
+    private static GUIinfoPanel infoPanel;
     private final JMenuBar menuBar;
 
     //Menubar, menu, and all the items
     private final JMenu menu;
     private final JMenuItem undoButton,highScore, newGame, resizeBoard, difWinValue, exitGame;
 
-    public GUI1024(GUI1024Panel panel, GUIButtonsPanel buttonPanel, GUIHighscorePanel highscorePanel) {
+    public GUI1024(GUI1024Panel panel, GUIButtonsPanel buttonPanel, GUIinfoPanel infoPanel) {
         setTitle("Welcome to 2048!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.panel = panel;
-        this.highscorePanel = highscorePanel;
+        this.infoPanel = infoPanel;
         this.buttonsPanel = buttonPanel;
 
 //        SpringLayout layout = new SpringLayout();
         BoxLayout layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
 
+        setBackground(Color.DARK_GRAY);
+
         setLayout(layout);
 
-        add(highscorePanel);
+        add(this.infoPanel);
         add(this.panel);
         add(this.buttonsPanel);
 
 
-        setSize(900,500);
-
-        pack();
+        setSize(800,451);
 
         //creates the menubar
         menuBar = new JMenuBar();
@@ -67,6 +67,7 @@ public class GUI1024 extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.undo();
+                infoPanel.updateAfterSlide();
             }
         });
 
@@ -84,6 +85,9 @@ public class GUI1024 extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.reset();
+                infoPanel.updateAfterSlide();
+                infoPanel.updateHighestScore();
+                infoPanel.updateNumPlays();
             }
         });
 
@@ -94,8 +98,9 @@ public class GUI1024 extends JFrame{
                 int boardSizeRow = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount of Rows"));
                 int boardSizeCol = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount if Columns"));
                 panel.changeBoardSize(boardSizeRow, boardSizeCol);
-                //***extra credit***
-
+                infoPanel.updateAfterSlide();
+                infoPanel.updateHighestScore();
+                infoPanel.updateNumPlays();
             }
         });
 
@@ -146,18 +151,31 @@ public class GUI1024 extends JFrame{
             }
             if (moved) {
                 panel.updateBoard();
-                highscorePanel.updateScore();
+                infoPanel.updateAfterSlide();
 //                System.out.println("MOVED");
-                if (panel.gameLogic.getStatus().equals(GameStatus.USER_WON))
-                    JOptionPane.showMessageDialog(null, "You won");
-                else if (panel.gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
-                    int resp = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "TentOnly Over!",
+                if (panel.gameLogic.getStatus().equals(GameStatus.USER_WON)) {
+                    int resp = JOptionPane.showConfirmDialog(null,
+                            "              You Won!\nDo you want to play again?",
+                            "Noice Job!",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (resp == JOptionPane.YES_OPTION) {
+                        panel.gameLogic.reset();
+                        infoPanel.updateNumWins();
+                        infoPanel.updateAfterSlide();
+                        infoPanel.updateHighestScore();
+                        infoPanel.updateNumPlays();
+                        panel.updateBoard();
+                    } else {
+                        System.exit(0);
+                    }
+                } else if (panel.gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
+                    int resp = JOptionPane.showConfirmDialog(null,
+                            "Do you want to play again?", "Bad... Get better...",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (resp == JOptionPane.YES_OPTION) {
                         panel.gameLogic.reset();
-                        panel.gameLogic.placeRandomValue();
-                        panel.gameLogic.placeRandomValue();
-                        highscorePanel.updateScore();
+                        infoPanel.updateAfterSlide();
+                        infoPanel.updateHighestScore();
+                        infoPanel.updateNumPlays();
                         panel.updateBoard();
                     } else {
                         System.exit(0);
@@ -177,12 +195,12 @@ public class GUI1024 extends JFrame{
 
     public static void main(String args[]){
         GUI1024Panel panel = new GUI1024Panel();
-        GUIButtonsPanel buttonPanel = new GUIButtonsPanel(panel);
-        GUIHighscorePanel highscorePanel = new GUIHighscorePanel(panel);
+        GUIinfoPanel infoPanel = new GUIinfoPanel(panel);
+        GUIButtonsPanel buttonPanel = new GUIButtonsPanel(panel, infoPanel);
         EventQueue.invokeLater(new Runnable(){
             @Override
             public void run(){
-                new GUI1024(panel, buttonPanel, highscorePanel).setVisible(true);
+                new GUI1024(panel, buttonPanel, infoPanel).setVisible(true);
             }
         });
     }

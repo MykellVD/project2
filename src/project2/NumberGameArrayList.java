@@ -16,17 +16,19 @@ public class NumberGameArrayList implements NumberSlider {
 	private Stack<Integer> savedScores = new Stack<>(); //dont think we will need
 
 	private Random rand = new Random();
+	private int prevRandRow;
+	private int prevRandCol;
 
 	private int height;
 	private int width;
 	private int winningValue;
 
-	private int score;
-	private int numSlides;
+	private int score = 0;
+	private int numSlides = 0;
 
-	private int numWins;
-	private int numPlays;
-	private int highestScore;
+	private int numWins = 0;
+	private int numPlays = 0;
+	private int highestScore = 0;
 
 	@Override
 	public void resizeBoard(int height, int width, int winningValue) {
@@ -38,6 +40,8 @@ public class NumberGameArrayList implements NumberSlider {
 			this.height = height;
 			this.width = width;
 			this.winningValue = winningValue;
+
+			board.clear();
 
 			//creates a 2d ArrayList containing Cell objects
 			for (int row = 0; row < height; row++) {
@@ -84,11 +88,14 @@ public class NumberGameArrayList implements NumberSlider {
 
 	@Override
 	public void reset() {
+		board.clear();
 		//resets all Cell objects values to 0
 		for (int row = 0; row < height; row++) {
+			//adds ArrayList to board
+			board.add(new ArrayList<>(width));
 			for (int col = 0; col < width; col++) {
-				//clears each cell
-				board.get(row).set(col, new Cell(row, col, 0));
+				//adds Cell using row, column, value = 0 to each board element
+				board.get(row).add(new Cell(row, col, 0));
 			}
 		}
 		savedBoards.clear();
@@ -96,6 +103,8 @@ public class NumberGameArrayList implements NumberSlider {
 
 		score = 0;
 		numSlides = 0;
+
+		updateHighestScore();
 
 		placeRandomValue();
 		placeRandomValue();
@@ -115,16 +124,23 @@ public class NumberGameArrayList implements NumberSlider {
 	public Cell placeRandomValue() {
 		getNonEmptyTiles();
 		Cell cell = null;
-		if (!emptyCells.isEmpty()) {
-			cell = emptyCells.get(0);
+		while (!emptyCells.isEmpty()) {
+			if (emptyCells.size() > 2) {
+				cell = emptyCells.get(rand.nextInt(emptyCells.size() - 1));
+				if (cell.row != prevRandRow || cell.column != prevRandCol)
+					break;
+			} else {
+				cell = emptyCells.get(0);
+				break;
+			}
 		}
 		if (cell != null) {
+			prevRandRow = cell.row;
+			prevRandCol = cell.column;
 			if (rand.nextInt(2) == 0)
 				board.get(cell.row).get(cell.column).value = 2;
 			else
 				board.get(cell.row).get(cell.column).value = 4;
-
-			numSlides += 1;
 			return board.get( cell.row).get( cell.column);
 		}
 		else
@@ -135,40 +151,37 @@ public class NumberGameArrayList implements NumberSlider {
 	@Override
 	public boolean slide(SlideDirection dir) {
 		getNonEmptyTiles();
-		boolean bool = false;
+		boolean moved = false;
 		if (dir.equals(SlideDirection.LEFT)) {
-			bool = SlideLeft();
-			placeRandomValue();
-			saveBoard();
+			moved = SlideLeft();
 		}
 		if (dir.equals(SlideDirection.UP)) {
-			bool = SlideUp();
-			placeRandomValue();
-			saveBoard();
+			moved = SlideUp();
 		}
 		if (dir.equals(SlideDirection.RIGHT)) {
-			bool = SlideRight();
-			placeRandomValue();
-			saveBoard();
+			moved = SlideRight();
 		}
 		if (dir.equals(SlideDirection.DOWN)) {
-			bool = SlideDown();
+			moved = SlideDown();
+		}
+		if (moved) {
+			numSlides += 1;
 			placeRandomValue();
 			saveBoard();
 		}
-		return bool;
+		return moved;
 	}
 
 	private boolean SlideLeft() {
 		boolean moved = false;
 		for (int x = 0; x < height; x++) {
-			for (int row = height-1; row >= 0; row--) {
-				for (int col = width-1; col > 0; col--) {
+			for (int row = 0; row <= height-1; row++) {
+				for (int col = 1; col <= width-1; col++) {
 					//current index isnt empty
 					if (board.get(row).get(col).value != 0) {
 
 						if (board.get(row).get(col - 1).value == 0) {
-							board.get(row).set(col - 1, new Cell(row, col - 1, board.get(row).get(col).value));
+							board.get(row).set(col - 1, new Cell(row, col- 1, board.get(row).get(col).value));
 							board.get(row).set(col, new Cell(row, col, 0));
 							moved = true;
 						}
@@ -220,7 +233,6 @@ public class NumberGameArrayList implements NumberSlider {
 
 	private boolean SlideRight() {
 		boolean moved = false;
-		printBoard();
 		for (int x = 0; x < height; x++) {
 			for (int row = height - 1; row > -1; row--) {
 				for (int col = width - 2; col > -1; col--) {
@@ -242,7 +254,6 @@ public class NumberGameArrayList implements NumberSlider {
 					}
 				}
 			}
-			printBoard();
 		}
 		resetHasCombined();
 		return moved;
@@ -307,7 +318,7 @@ public class NumberGameArrayList implements NumberSlider {
 		//adds Cell to NonEmptyCells if its value isnt 0
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
-				if (board.get(row).get(col).value != 0) {
+				if (board.get(row).get(col).value > 0) {
 					nonEmptyCells.add(board.get(row).get(col));
 				} else {
 					emptyCells.add(board.get(row).get(col));
@@ -328,6 +339,8 @@ public class NumberGameArrayList implements NumberSlider {
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++)
 				if (board.get(row).get(col).value == winningValue) {
+					numWins += 1;
+					updateHighestScore();
 					return GameStatus.USER_WON;
 				}
 		boolean lose = true;
@@ -352,6 +365,7 @@ public class NumberGameArrayList implements NumberSlider {
 						return GameStatus.IN_PROGRESS;
 				}
 			}
+			updateHighestScore();
 			return GameStatus.USER_LOST;
 		}
 		return GameStatus.IN_PROGRESS;
@@ -396,5 +410,27 @@ public class NumberGameArrayList implements NumberSlider {
 
 	public int getNumSlides() {
 		return numSlides;
+	}
+
+	public int getNumWins() {
+		return numWins;
+	}
+
+	public void updateHighestScore() {
+		if (getScore() > highestScore) {
+			highestScore = getScore();
+		}
+	}
+
+	public int getHighestScore() {
+		return highestScore;
+	}
+
+	public void incNumPlays() {
+		numPlays++;
+	}
+
+	public int getNumPlays() {
+		return numPlays;
 	}
 }

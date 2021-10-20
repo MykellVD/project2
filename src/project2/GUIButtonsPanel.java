@@ -4,15 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class GUIButtonsPanel extends JPanel {
     private JButton undoBut, newGameBut, resizeBut, winValBut;
     private GUI1024Panel panel;
     private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
-    public GUIButtonsPanel(GUI1024Panel panel) {
+    public GUIButtonsPanel(GUI1024Panel panel, GUIinfoPanel infoPanel) {
         this.panel = panel;
 
         setLayout(new GridLayout(4, 1));
@@ -42,6 +40,7 @@ public class GUIButtonsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.undo();
+                infoPanel.updateAfterSlide();
             }
         });
 
@@ -49,6 +48,9 @@ public class GUIButtonsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.reset();
+                infoPanel.updateAfterSlide();
+                infoPanel.updateHighestScore();
+                infoPanel.updateNumPlays();
             }
         });
 
@@ -58,6 +60,9 @@ public class GUIButtonsPanel extends JPanel {
                 int boardSizeRow = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount of Rows"));
                 int boardSizeCol = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount if Columns"));
                 panel.changeBoardSize(boardSizeRow, boardSizeCol);
+                infoPanel.updateAfterSlide();
+                infoPanel.updateHighestScore();
+                infoPanel.updateNumPlays();
             }
         });
 
