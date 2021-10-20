@@ -13,7 +13,6 @@ public class NumberGameArrayList implements NumberSlider {
 	private ArrayList<Cell> nonEmptyCells = new ArrayList<>();
 	private ArrayList<Cell> emptyCells = new ArrayList<>();
 	private Stack<int[][]> savedBoards = new Stack<>();
-	private Stack<Integer> savedScores = new Stack<>(); //dont think we will need
 
 	private Random rand = new Random();
 	private int prevRandRow;
@@ -99,11 +98,9 @@ public class NumberGameArrayList implements NumberSlider {
 			}
 		}
 		savedBoards.clear();
-		savedScores.clear();
 
 		score = 0;
 		numSlides = 0;
-
 		updateHighestScore();
 
 		placeRandomValue();
@@ -174,7 +171,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 	private boolean SlideLeft() {
 		boolean moved = false;
-		for (int x = 0; x < height; x++) {
+		for (int x = 0; x < getLargerSide(); x++) {
 			for (int row = 0; row <= height-1; row++) {
 				for (int col = 1; col <= width-1; col++) {
 					//current index isnt empty
@@ -204,7 +201,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 	private boolean SlideUp() {
 		boolean moved = false;
-		for (int x = 0; x < height; x++) {
+		for (int x = 0; x < getLargerSide(); x++) {
 			for (int row = 1; row < height; row++) {
 				for (int col = 0; col < width; col++) {
 					//current index isnt empty
@@ -233,7 +230,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 	private boolean SlideRight() {
 		boolean moved = false;
-		for (int x = 0; x < height; x++) {
+		for (int x = 0; x < getLargerSide(); x++) {
 			for (int row = height - 1; row > -1; row--) {
 				for (int col = width - 2; col > -1; col--) {
 					if (board.get(row).get(col).value != 0) {
@@ -261,7 +258,7 @@ public class NumberGameArrayList implements NumberSlider {
 
 	private boolean SlideDown() {
 		boolean moved = false;
-		for (int x = 0; x < height; x++) {
+		for (int x = 0; x < getLargerSide(); x++) {
 			for (int row = height - 2; row > -1; row--) {
 				for (int col = width - 1; col > -1; col--) {
 					if (board.get(row).get(col).value != 0) {
@@ -285,6 +282,12 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 		resetHasCombined();
 		return moved;
+	}
+
+	private int getLargerSide() {
+		if (height > width)
+			return height;
+		return width;
 	}
 
 	private void resetHasCombined() {
@@ -380,7 +383,6 @@ public class NumberGameArrayList implements NumberSlider {
 			}
 		}
 		savedBoards.push(temp);
-		savedScores.push(score);
 	}
 
 
@@ -391,12 +393,7 @@ public class NumberGameArrayList implements NumberSlider {
 			int[][] previousBoard = savedBoards.get(savedBoards.size()-2);
 			savedBoards.pop();
 
-			int previousScore = savedScores.get(savedScores.size()-2);
-			savedScores.pop();
-
 			setValues(previousBoard);
-			score = previousScore;
-
 		}
 	}
 
