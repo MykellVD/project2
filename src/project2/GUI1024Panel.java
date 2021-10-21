@@ -1,21 +1,23 @@
-package project2;
+package CISProjects.Project2;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class GUI1024Panel extends JPanel {
 
 	private JLabel[][] gameBoardUI;
 	public NumberGameArrayList gameLogic;
-	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 80);
-	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 55);
-	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 40);
+	private Font myTextFont = new Font(Font.SANS_SERIF, Font.BOLD, 32);
+	private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 60);
+	private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 48);
+
+	private JButton undoBut, newGameBut, resizeBut, winValBut;
+	private JLabel score;
+
 
 	public GUI1024Panel() {
 		gameLogic = new NumberGameArrayList();
@@ -36,6 +38,8 @@ public class GUI1024Panel extends JPanel {
 				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
 				add(gameBoardUI[k][m]);
 			}
+
+		undoBut = new JButton("undo");
 
 		gameLogic.reset();
 		updateBoard();
@@ -65,6 +69,21 @@ public class GUI1024Panel extends JPanel {
 				z.setFont(myTextFont3Char);
 			if (z.getText().length() == 4)
 				z.setFont(myTextFont4Char);
+
+			int stringWidth = z.getFontMetrics(myTextFont).stringWidth(String.valueOf(c.value));
+			int componentWidth = z.getWidth();
+
+			// Find out how much the font can grow in width.
+			double widthRatio = (double)componentWidth / (double)stringWidth;
+
+			int newFontSize = (int)(myTextFont.getSize() * widthRatio);
+			int componentHeight = z.getHeight();
+
+			// Pick a new font size so it will not be larger than the height of label.
+			int fontSizeToUse = Math.min(newFontSize, componentHeight);
+
+            // Set the label's font size to the new size.
+			z.setFont(new Font(myTextFont.getName(), Font.LAYOUT_RIGHT_TO_LEFT, fontSizeToUse));
 
 			if (c.value == 2){
 				z.setForeground(Color.LIGHT_GRAY);
@@ -144,4 +163,63 @@ public class GUI1024Panel extends JPanel {
 		gameLogic.changeWinningVal(winningVal);
 	}
 
+//	public static class SlideListener implements KeyListener, ActionListener {
+//		@Override
+//		public void keyTyped(KeyEvent e) { }
+//
+//		@Override
+//		public void keyPressed(KeyEvent e) {
+//
+//			boolean moved = false;
+//			switch (e.getKeyCode()) {
+//				case KeyEvent.VK_UP:
+//					moved = gameLogic.slide(SlideDirection.UP);
+//					break;
+//				case KeyEvent.VK_LEFT:
+//					moved = gameLogic.slide(SlideDirection.LEFT);
+//					break;
+//				case KeyEvent.VK_DOWN:
+//					moved = gameLogic.slide(SlideDirection.DOWN);
+//					break;
+//				case KeyEvent.VK_RIGHT:
+//					moved = gameLogic.slide(SlideDirection.RIGHT);
+//					break;
+//				case KeyEvent.VK_U:
+//					try {
+//						System.out.println("Attempt to undo");
+//						gameLogic.undo();
+//						moved = true;
+//					} catch (IllegalStateException exp) {
+//						JOptionPane.showMessageDialog(null, "Can't undo beyond the first move");
+//						moved = false;
+//					}
+//			}
+//			if (moved) {
+//				updateBoard();
+////                System.out.println("MOVED");
+//				if (gameLogic.getStatus().equals(GameStatus.USER_WON))
+//					JOptionPane.showMessageDialog(null, "You won");
+//				else if (gameLogic.getStatus().equals(GameStatus.USER_LOST)) {
+//					int resp = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "TentOnly Over!",
+//							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+//					if (resp == JOptionPane.YES_OPTION) {
+//						gameLogic.reset();
+//						gameLogic.placeRandomValue();
+//						gameLogic.placeRandomValue();
+//						updateBoard();
+//					} else {
+//						System.exit(0);
+//					}
+//				}
+//			}
+//		}
+//
+//		@Override
+//		public void keyReleased(KeyEvent e) { }
+//
+//		@Override
+//		public void actionPerformed(ActionEvent e) { }
+//
+//
+//	}
 }
