@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 
 public class GUIButtonsPanel extends JPanel {
     private JButton undoBut, newGameBut, resizeBut, winValBut;
-    private GUI1024Panel panel;
+    private GUI1024Board panel;
     private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
-    public GUIButtonsPanel(GUI1024Panel panel, GUIinfoPanel infoPanel) {
+    public GUIButtonsPanel(GUI1024Board panel, GUIinfoPanel infoPanel) {
         this.panel = panel;
 
         setLayout(new GridLayout(4, 1));

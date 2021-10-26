@@ -5,7 +5,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 
 public class GUIinfoPanel extends JPanel {
-    GUI1024Panel panel;
+    GUI1024Board panel;
     private JLabel score, scoreText, numSlidesText, numSlides, numWins, numWinsText, numPlays, numPlaysText;
     private JLabel highscore, highscoreText, spliter;
 
@@ -13,12 +13,12 @@ public class GUIinfoPanel extends JPanel {
     private Font myTextFont3Char = new Font(Font.SANS_SERIF, Font.BOLD, 32);
     private Font myTextFont4Char = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
-    public GUIinfoPanel(GUI1024Panel panel) {
+    public GUIinfoPanel(GUI1024Board panel) {
         this.panel = panel;
 
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(layout);
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         setBackground(Color.DARK_GRAY);
 
         scoreText =  new JLabel(" Score: ");

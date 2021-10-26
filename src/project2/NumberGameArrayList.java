@@ -1,5 +1,11 @@
 package project2;
 
+/*****************************************************************
+ NumberGameArrayList
+ @author Jake Umlor
+ @author Michael Van Duine
+ @version Fall 2021
+ *****************************************************************/
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,25 +14,39 @@ import java.util.Random;
 import java.util.Stack;
 
 public class NumberGameArrayList implements NumberSlider {
-	// Create a 2d ArrayList that holds Cell objects
+	/** 2d ArrayList of Cells  */
 	private ArrayList< ArrayList<Cell> > board = new ArrayList<>();
+	/**  */
 	private ArrayList<Cell> nonEmptyCells = new ArrayList<>();
+	/**  */
 	private ArrayList<Cell> emptyCells = new ArrayList<>();
+	/**  */
 	private Stack<int[][]> savedBoards = new Stack<>();
 
+	/**  */
 	private Random rand = new Random();
+	/**  */
 	private int prevRandRow;
+	/**  */
 	private int prevRandCol;
 
+	/**  */
 	private int height;
+	/**  */
 	private int width;
+	/**  */
 	private int winningValue;
 
+	/**  */
 	private int score = 0;
+	/**  */
 	private int numSlides = 0;
 
+	/**  */
 	private int numWins = 0;
+	/**  */
 	private int numPlays = 0;
+	/**  */
 	private int highestScore = 0;
 
 	@Override
@@ -51,8 +71,6 @@ public class NumberGameArrayList implements NumberSlider {
 					board.get(row).add(new Cell(row, col, 0));
 				}
 			}
-			//REMOVE test to see if row and column are set correctly
-			//System.out.println(board.get(3).get(2).getRow() + " " + board.get(3).get(2).getColumn());
 		}
 	}
 
@@ -72,8 +90,6 @@ public class NumberGameArrayList implements NumberSlider {
 				board.get(row).add(new Cell(row, col, 0));
 			}
 		}
-		//REMOVE test to see if row and column are set correctly
-		//System.out.println(board.get(3).get(2).getRow() + " " + board.get(3).get(2).getColumn());
 
 	}
 
@@ -284,7 +300,7 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
-	private int getLargerSide() {
+	public int getLargerSide() {
 		if (height > width)
 			return height;
 		return width;
