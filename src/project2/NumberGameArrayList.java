@@ -1,7 +1,7 @@
-package project2;
+package CISProjects.Project2;
 
 /*****************************************************************
- NumberGameArrayList
+ NumberGameArrayList, This is the 2048 game.
  @author Jake Umlor
  @author Michael Van Duine
  @version Fall 2021
@@ -424,161 +424,166 @@ public class NumberGameArrayList implements NumberSlider {
 		System.out.println();
 	}
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	@Override
-	public ArrayList<Cell> getNonEmptyTiles() {
-		//Clears NonEmptyCells to not have duplicates after sliding
-		nonEmptyCells.clear();
-		emptyCells.clear();
+    /*****************************************************************
+     * This method will add the Cell to the NonEmptyCells when the
+     * value is not zero.
+     * @return ArrayList<Cell>
+     */
+    @Override
+    public ArrayList<Cell> getNonEmptyTiles() {
+        //Clears NonEmptyCells to not have duplicates after sliding
+        nonEmptyCells.clear();
+        emptyCells.clear();
 
-		//adds Cell to NonEmptyCells if its value isnt 0
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width; col++) {
-				if (board.get(row).get(col).value > 0) {
-					nonEmptyCells.add(board.get(row).get(col));
-				} else {
-					emptyCells.add(board.get(row).get(col));
-				}
-			}
+        //adds Cell to NonEmptyCells if its value isnt 0
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                if (board.get(row).get(col).value > 0) {
+                    nonEmptyCells.add(board.get(row).get(col));
+                } else {
+                    emptyCells.add(board.get(row).get(col));
+                }
+            }
 
-		}
+        }
 
-		Collections.shuffle(emptyCells);
+        Collections.shuffle(emptyCells);
 
-		return nonEmptyCells;
-	}
+        return nonEmptyCells;
+    }
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	@Override
-	public GameStatus getStatus() {
-		getNonEmptyTiles();
-		boolean userLost = false;
-		for (int row = 0; row < height; row++)
-			for (int col = 0; col < width; col++)
-				if (board.get(row).get(col).value == winningValue) {
-					numWins += 1;
-					updateHighestScore();
-					return GameStatus.USER_WON;
-				}
-		boolean lose = true;
-		if (emptyCells.size() == 0) {
-			for (int row = 1; row < height - 1; row++) {
-				for (int col = 0; col < width; col++) {
-					Cell cur = board.get(row).get(col);
-					if (cur.equals(board.get(row - 1).get(col)))
-						return GameStatus.IN_PROGRESS;
+    /*****************************************************************
+     * This method returns the current state of the game.
+     * @return GameStatus
+     */
+    @Override
+    public GameStatus getStatus() {
+        getNonEmptyTiles();
+        boolean userLost = false;
+        for (int row = 0; row < height; row++)
+            for (int col = 0; col < width; col++)
+                if (board.get(row).get(col).value == winningValue) {
+                    numWins += 1;
+                    updateHighestScore();
+                    return GameStatus.USER_WON;
+                }
+        boolean lose = true;
+        if (emptyCells.size() == 0) {
+            for (int row = 1; row < height - 1; row++) {
+                for (int col = 0; col < width; col++) {
+                    Cell cur = board.get(row).get(col);
+                    if (cur.equals(board.get(row - 1).get(col)))
+                        return GameStatus.IN_PROGRESS;
 
-					if (cur.equals(board.get(row + 1).get(col)))
-						return GameStatus.IN_PROGRESS;
-				}
-			}
-			for (int row = 0; row < height; row++) {
-				for (int col = 1; col < width - 1; col++) {
-					Cell cur = board.get(row).get(col);
-					if (cur.equals(board.get(row).get(col - 1)))
-						return GameStatus.IN_PROGRESS;
+                    if (cur.equals(board.get(row + 1).get(col)))
+                        return GameStatus.IN_PROGRESS;
+                }
+            }
+            for (int row = 0; row < height; row++) {
+                for (int col = 1; col < width - 1; col++) {
+                    Cell cur = board.get(row).get(col);
+                    if (cur.equals(board.get(row).get(col - 1)))
+                        return GameStatus.IN_PROGRESS;
 
-					if (cur.equals(board.get(row).get(col + 1)))
-						return GameStatus.IN_PROGRESS;
-				}
-			}
-			updateHighestScore();
-			return GameStatus.USER_LOST;
-		}
-		return GameStatus.IN_PROGRESS;
-	}
+                    if (cur.equals(board.get(row).get(col + 1)))
+                        return GameStatus.IN_PROGRESS;
+                }
+            }
+            updateHighestScore();
+            return GameStatus.USER_LOST;
+        }
+        return GameStatus.IN_PROGRESS;
+    }
 
-	/*****************************************************************
-	 *
-	 */
-	public void saveBoard() {
-		int[][] temp = new int[height][width];
+    /*****************************************************************
+     * This method saves a temp board, used to undo.
+     *
+     */
+    public void saveBoard() {
+        int[][] temp = new int[height][width];
 
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width; col++) {
-				temp[row][col] = board.get(row).get(col).value;
-			}
-		}
-		savedBoards.push(temp);
-	}
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                temp[row][col] = board.get(row).get(col).value;
+            }
+        }
+        savedBoards.push(temp);
+    }
 
-	/*****************************************************************
-	 *
-	 */
-	@Override
-	public void undo() {
-		if(savedBoards.size() > 1){
 
-			int[][] previousBoard = savedBoards.get(savedBoards.size()-2);
-			savedBoards.pop();
+    /*****************************************************************
+     * Undo the most recent action, i.e. restore the board to its
+     * previous state.
+     */
+    @Override
+    public void undo() {
+        if (savedBoards.size() > 1) {
 
-			setValues(previousBoard);
-		}
-	}
+            int[][] previousBoard = savedBoards.get(savedBoards.size() - 2);
+            savedBoards.pop();
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	public int getScore() {
-		int total = 0;
-		for (int i = 0; i < nonEmptyCells.size(); i++) {
-			total += nonEmptyCells.get(i).value * nonEmptyCells.get(i).value;
-		}
-		return total;
-	}
+            setValues(previousBoard);
+        }
+    }
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	public int getNumSlides() {
-		return numSlides;
-	}
+    /*****************************************************************
+     * This method calculates the score of the game.
+     * @return total
+     */
+    public int getScore() {
+        int total = 0;
+        for (int i = 0; i < nonEmptyCells.size(); i++) {
+            total += nonEmptyCells.get(i).value * nonEmptyCells.get(i).value;
+        }
+        return total;
+    }
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	public int getNumWins() {
-		return numWins;
-	}
+    /*****************************************************************
+     * This method gets the number of slides.
+     * @return numSlides
+     */
+    public int getNumSlides() {
+        return numSlides;
+    }
 
-	/*****************************************************************
-	 *
-	 */
-	public void updateHighestScore() {
-		if (getScore() > highestScore) {
-			highestScore = getScore();
-		}
-	}
+    /*****************************************************************
+     * This method gets the number of wins.
+     * @return numWins
+     */
+    public int getNumWins() {
+        return numWins;
+    }
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	public int getHighestScore() {
-		return highestScore;
-	}
+    /*****************************************************************
+     * This method updates the highscore if beat.
+     */
+    public void updateHighestScore() {
+        if (getScore() > highestScore) {
+            highestScore = getScore();
+        }
+    }
 
-	/*****************************************************************
-	 *
-	 */
-	public void incNumPlays() {
-		numPlays++;
-	}
+    /*****************************************************************
+     * This method gets the highest score.
+     * @return highestScore
+     */
+    public int getHighestScore() {
+        return highestScore;
+    }
 
-	/*****************************************************************
-	 *
-	 * @return
-	 */
-	public int getNumPlays() {
-		return numPlays;
-	}
+    /*****************************************************************
+     * This method will add to the number of plays.
+     */
+    public void incNumPlays() {
+        numPlays++;
+    }
+
+    /*****************************************************************
+     * This method will return the amount of times the game has been
+     * played.
+     * @return numPlays
+     */
+    public int getNumPlays() {
+        return numPlays;
+    }
 }
