@@ -14,41 +14,62 @@ import java.util.Random;
 import java.util.Stack;
 
 public class NumberGameArrayList implements NumberSlider {
-	/** 2d ArrayList of Cells  */
+	/** 2d ArrayList of Cells */
 	private ArrayList< ArrayList<Cell> > board = new ArrayList<>();
-	/**  */
+
+	/** ArrayList of Cells where Cell doesn't hold 0 */
 	private ArrayList<Cell> nonEmptyCells = new ArrayList<>();
-	/**  */
+
+	/** ArrayList of Cells where Cell holds 0 */
 	private ArrayList<Cell> emptyCells = new ArrayList<>();
-	/**  */
+
+	/** Stack storing a 2d integer array */
 	private Stack<int[][]> savedBoards = new Stack<>();
 
-	/**  */
+	/** Random Object */
 	private Random rand = new Random();
-	/**  */
+
+	/** previous row of random placed Cell */
 	private int prevRandRow;
-	/**  */
+
+	/** previous column of random placed Cell */
 	private int prevRandCol;
 
-	/**  */
+	/** height of ArrayList board */
 	private int height;
-	/**  */
+
+	/** width of ArrayList board */
 	private int width;
-	/**  */
+
+	/** value the user reaches to win */
 	private int winningValue;
 
-	/**  */
+	/** current users total score */
 	private int score = 0;
-	/**  */
+
+	/** number of slides the user gives */
 	private int numSlides = 0;
 
-	/**  */
+	/** amount of times a user has won */
 	private int numWins = 0;
-	/**  */
+
+	/** amount of times a user has won, lost, reset */
 	private int numPlays = 0;
-	/**  */
+
+	/** highest score achieved by the user */
 	private int highestScore = 0;
 
+	/*****************************************************************
+	 * A function that initializes the instance variables height,
+	 * width, winningValue. Initializes the ArrayList board.
+	 *
+	 * @param height the number of rows in the board
+	 * @param width the number of columns in the board
+	 * @param winningValue the value that must appear on the board to
+	 * win the game
+	 * @throws IllegalArgumentException when winningValue isnt a
+	 * multiple of 2
+	 */
 	@Override
 	public void resizeBoard(int height, int width, int winningValue) {
 		// errors out if winningValue isnt a multiple of 2
@@ -74,6 +95,13 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	/*****************************************************************
+	 * A function that sets the instance variables height,
+	 * width. Reinitializes the ArrayList board.
+	 *
+	 * @param height
+	 * @param width
+	 */
 	public void changeBoardSize(int height, int width) {
 		//sets base values for later
 		this.height = height;
@@ -93,6 +121,14 @@ public class NumberGameArrayList implements NumberSlider {
 
 	}
 
+	/*****************************************************************
+	 * A function that reinitializes the instance variable
+	 * winningValue.
+	 *
+	 * @param winningValue
+	 * @throws IllegalArgumentException when winningValue isnt a
+	 * multiple of 2
+	 */
 	public void changeWinningVal(int winningValue) {
 		if (winningValue % 2 == 0 && winningValue < 0) {
 			throw new IllegalArgumentException();
@@ -101,6 +137,10 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	/*****************************************************************
+	 * A function that reinitializes the instances variables board,
+	 * score, and numSlides. Clears Stack savedBoards.
+	 */
 	@Override
 	public void reset() {
 		board.clear();
@@ -124,6 +164,12 @@ public class NumberGameArrayList implements NumberSlider {
 		saveBoard();
 	}
 
+	/*****************************************************************
+	 * A method that sets the given 2d array to the Cells stored
+	 * in board.
+	 *
+	 * @param ref
+	 */
 	@Override
 	public void setValues(int[][] ref) {
 		for (int row = 0; row < height; row++) {
@@ -133,6 +179,13 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	/*****************************************************************
+	 * A method that sets a random Cells value from board to a
+	 * 2 or a 4 determined using Random Object rand. Then returning
+	 * the Cell that was changed.
+	 *
+	 * @return Cell
+	 */
 	@Override
 	public Cell placeRandomValue() {
 		getNonEmptyTiles();
@@ -160,7 +213,13 @@ public class NumberGameArrayList implements NumberSlider {
 			return null;
 	}
 
-
+	/*****************************************************************
+	 * A method that takes in a SlideDirection and returns moved
+	 * if slide is successful.
+	 *
+	 * @param dir move direction of the tiles
+	 * @return moved
+	 */
 	@Override
 	public boolean slide(SlideDirection dir) {
 		getNonEmptyTiles();
@@ -185,6 +244,12 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
+	/*****************************************************************
+	 * A method that slides values in board left. Then returns if
+	 * slide was successful.
+	 *
+	 * @return moved
+	 */
 	private boolean SlideLeft() {
 		boolean moved = false;
 		for (int x = 0; x < getLargerSide(); x++) {
@@ -215,6 +280,12 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
+	/*****************************************************************
+	 * A method that slides values in board up. Then returns if
+	 * slide was successful.
+	 *
+	 * @return moved
+	 */
 	private boolean SlideUp() {
 		boolean moved = false;
 		for (int x = 0; x < getLargerSide(); x++) {
@@ -244,6 +315,12 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
+	/*****************************************************************
+	 * A method that slides values in board right. Then returns if
+	 * slide was successful.
+	 *
+	 * @return moved
+	 */
 	private boolean SlideRight() {
 		boolean moved = false;
 		for (int x = 0; x < getLargerSide(); x++) {
@@ -272,6 +349,12 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
+	/*****************************************************************
+	 * A method that slides values in board down. Then returns if
+	 * slide was successful.
+	 *
+	 * @return moved
+	 */
 	private boolean SlideDown() {
 		boolean moved = false;
 		for (int x = 0; x < getLargerSide(); x++) {
@@ -300,12 +383,21 @@ public class NumberGameArrayList implements NumberSlider {
 		return moved;
 	}
 
+	/*****************************************************************
+	 * A helper method that returns the larger of height and width.
+	 *
+	 * @return larger of height and width
+	 */
 	public int getLargerSide() {
 		if (height > width)
 			return height;
 		return width;
 	}
 
+	/*****************************************************************
+	 * A helper method that sets all board Cells boolean hasCombined
+	 * to false.
+	 */
 	private void resetHasCombined() {
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
@@ -314,6 +406,10 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	/*****************************************************************
+	 * A helper method that outputs the Cell values stored in board
+	 * to the console.
+	 */
 	public void printBoard() {
 		String NUM_FORMAT = String.format("%%%dd", 4);
 		String BLANK_FORMAT = "%" + (4) + "s";
@@ -328,6 +424,10 @@ public class NumberGameArrayList implements NumberSlider {
 		System.out.println();
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	@Override
 	public ArrayList<Cell> getNonEmptyTiles() {
 		//Clears NonEmptyCells to not have duplicates after sliding
@@ -351,6 +451,10 @@ public class NumberGameArrayList implements NumberSlider {
 		return nonEmptyCells;
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	@Override
 	public GameStatus getStatus() {
 		getNonEmptyTiles();
@@ -390,6 +494,9 @@ public class NumberGameArrayList implements NumberSlider {
 		return GameStatus.IN_PROGRESS;
 	}
 
+	/*****************************************************************
+	 *
+	 */
 	public void saveBoard() {
 		int[][] temp = new int[height][width];
 
@@ -401,7 +508,9 @@ public class NumberGameArrayList implements NumberSlider {
 		savedBoards.push(temp);
 	}
 
-
+	/*****************************************************************
+	 *
+	 */
 	@Override
 	public void undo() {
 		if(savedBoards.size() > 1){
@@ -413,6 +522,10 @@ public class NumberGameArrayList implements NumberSlider {
 		}
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	public int getScore() {
 		int total = 0;
 		for (int i = 0; i < nonEmptyCells.size(); i++) {
@@ -421,28 +534,50 @@ public class NumberGameArrayList implements NumberSlider {
 		return total;
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	public int getNumSlides() {
 		return numSlides;
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	public int getNumWins() {
 		return numWins;
 	}
 
+	/*****************************************************************
+	 *
+	 */
 	public void updateHighestScore() {
 		if (getScore() > highestScore) {
 			highestScore = getScore();
 		}
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	public int getHighestScore() {
 		return highestScore;
 	}
 
+	/*****************************************************************
+	 *
+	 */
 	public void incNumPlays() {
 		numPlays++;
 	}
 
+	/*****************************************************************
+	 *
+	 * @return
+	 */
 	public int getNumPlays() {
 		return numPlays;
 	}
