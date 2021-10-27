@@ -24,7 +24,10 @@ public class GUI1024 extends JFrame{
 
         add(this.panel);
 
-        setSize(800, 451);
+        setLayout(new GridLayout(1,1));
+        setPreferredSize(getPreferredSize());
+        pack();
+
 
         //creates the menubar
         menuBar = new JMenuBar();

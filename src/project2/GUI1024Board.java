@@ -30,7 +30,8 @@ public class GUI1024Board extends JPanel {
 				gameBoardUI[k][m] = new JLabel("",SwingConstants.CENTER);
 				gameBoardUI[k][m].setFont(myTextFont);
 				gameBoardUI[k][m].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
+				gameBoardUI[k][m].setMinimumSize(new Dimension(100, 100));
+				gameBoardUI[k][m].setPreferredSize(new Dimension(200, 140));
 				add(gameBoardUI[k][m]);
 			}
 
@@ -58,17 +59,16 @@ public class GUI1024Board extends JPanel {
 		for (Cell c : out) {
 			JLabel z = gameBoardUI[c.row][c.column];
 			z.setText(String.valueOf(Math.abs(c.value)));
-//			z.setText("1234");
 
 			double sideLen = gameLogic.getLargerSide() * .2;
 			int fontSize = 80;
-			fontSize *= sideLen;
+			fontSize /= sideLen;
 			if (z.getText().length() == 2)
 				fontSize -= 10;
 			if (z.getText().length() == 3)
-				fontSize -= 20;
+				fontSize -= 15;
 			if (z.getText().length() == 4)
-				fontSize -= 30;
+				fontSize -= 20;
 
 			z.setFont(new Font(Font.SANS_SERIF, Font.BOLD, fontSize));
 
@@ -103,13 +103,12 @@ public class GUI1024Board extends JPanel {
 				z.setForeground(Color.BLUE);
 			}
 			if (c.value == 2048){
-				z.setForeground(Color.RED);
+				z.setForeground(new Color(102, 0, 153)); //purple
 			}
 		}
 	}
 
 	public void undo() {
-		//rolls back the board
 		gameLogic.undo();
 		updateBoard();
 	}
@@ -136,7 +135,7 @@ public class GUI1024Board extends JPanel {
 				gameBoardUI[k][m] = new JLabel("",SwingConstants.CENTER);
 				gameBoardUI[k][m].setFont(myTextFont);
 				gameBoardUI[k][m].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-				gameBoardUI[k][m].setPreferredSize(new Dimension(100, 100));
+				gameBoardUI[k][m].setMinimumSize(new Dimension(100, 100));
 				add(gameBoardUI[k][m]);
 			}
 

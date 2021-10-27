@@ -16,6 +16,8 @@ public class GUIinfoPanel extends JPanel {
     public GUIinfoPanel(GUI1024Board panel) {
         this.panel = panel;
 
+        setPreferredSize(new Dimension(180, 450));
+
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(layout);
 

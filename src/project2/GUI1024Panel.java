@@ -33,6 +33,29 @@ public class GUI1024Panel extends JPanel{
         add(this.board);
         add(this.buttonsPanel);
 
+        int preferredWidth = this.infoPanel.getPreferredSize().width + this.board.getPreferredSize().width +
+                this.buttonsPanel.getPreferredSize().width;
+
+        int preferredHeight = Math.max(this.infoPanel.getPreferredSize().height, this.board.getPreferredSize().height);
+        preferredHeight = Math.max(preferredHeight, this.buttonsPanel.getPreferredSize().height);
+
+        setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+        System.out.println(getPreferredSize());
+        System.out.println(this.infoPanel.getPreferredSize());
+        System.out.println(this.board.getPreferredSize());
+        System.out.println(this.buttonsPanel.getPreferredSize());
+        resizeBoard();
+
+    }
+
+    public void resizeWindow() {
+        int preferredWidth = this.infoPanel.getPreferredSize().width + this.board.getPreferredSize().width +
+                this.buttonsPanel.getPreferredSize().width;
+
+        int preferredHeight = Math.max(this.infoPanel.getPreferredSize().height, this.board.getPreferredSize().height);
+        preferredHeight = Math.max(preferredHeight, this.buttonsPanel.getPreferredSize().height);
+
+        setPreferredSize(new Dimension(preferredWidth, preferredHeight));
     }
 
     public void undo() {
@@ -52,9 +75,17 @@ public class GUI1024Panel extends JPanel{
         infoPanel.updateNumPlays();
     }
 
+    public int getBoardSize(String side) {
+        int boardSize = Integer.parseInt(JOptionPane.showInputDialog("Enter Amount of " + side + " Between 3 and 10"));
+        if (boardSize < 3 || boardSize > 10) {
+            return getBoardSize(side);
+        }
+        return boardSize;
+    }
+
     public void resizeBoard() {
-        int boardSizeRow = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount of Rows"));
-        int boardSizeCol = Integer.parseInt(JOptionPane.showInputDialog("Please Select the Amount if Columns"));
+        int boardSizeRow = getBoardSize("Row");
+        int boardSizeCol = getBoardSize("Column");
         board.changeBoardSize(boardSizeRow, boardSizeCol);
         infoPanel.updateAfterSlide();
         infoPanel.updateHighestScore();
@@ -62,8 +93,12 @@ public class GUI1024Panel extends JPanel{
     }
 
     public void difWinValue() {
-        int winningValue = Integer.parseInt(JOptionPane.showInputDialog("Please Select a New Winning Value"));
-        board.changeWinningVal(winningValue);
+        int winningValue = Integer.parseInt(JOptionPane.showInputDialog("Enter the Amount of New Winning Value"));
+        if (winningValue % 2 != 0)
+            difWinValue();
+        else {
+            board.changeWinningVal(winningValue);
+        }
     }
 
 
